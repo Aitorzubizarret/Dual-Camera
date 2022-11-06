@@ -38,7 +38,13 @@ final class CamerasViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        setupView()
         checkCameraPermission()
+    }
+    
+    private func setupView() {
+        mainCameraOutputView.backgroundColor = UIColor.black
+        secondaryCameraOutputView.backgroundColor = UIColor.black
     }
     
     private func checkCameraPermission() {
@@ -56,12 +62,20 @@ final class CamerasViewController: UIViewController {
     private func checkMultiCamSupport() {
         if cameraManager.isMultiCamSupported() {
             print("Multicam supported")
-            cameraManager.setupCameraOutput(mainCameraPreviewView: self.mainCameraOutputView)
+            cameraManager.setupCameraOutputs(frontCameraPreviewView: mainCameraOutputView,
+                                             backCameraPreviewView: secondaryCameraOutputView)
             cameraManager.setupCameraSession()
-            if cameraManager.isMainCaptureDeviceReady() {
-                cameraManager.displayMainCaptureDeviceOutput()
+            
+            if cameraManager.isFrontCaptureDeviceReady() {
+                cameraManager.displayFrontCaptureDeviceOutput()
             } else {
-                print("No Main Capture Device Ready.")
+                print("No Front Capture Device Ready.")
+            }
+            
+            if cameraManager.isBackCaptureDeviceReady() {
+                cameraManager.displayBackCaptureDeviceOutput()
+            } else {
+                print("No Back Capture Device Ready.")
             }
         } else {
             displayMultiCamNotSupportedAlertView()

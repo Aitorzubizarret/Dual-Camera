@@ -12,10 +12,13 @@ final class CameraManager: NSObject {
     
     // MARK: - Properties
     
-    private var session: AVCaptureSession? // AVCaptureMultiCamSession()
-    private var mainCameraPreviewView: UIView?
-    private var mainCaptureDevice: AVCaptureDevice?
-    private var mainCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
+    private var session: AVCaptureMultiCamSession? // AVCaptureSession?
+    private var frontCameraPreviewView: UIView?
+    private var backCameraPreviewView: UIView?
+    private var frontCaptureDevice: AVCaptureDevice?
+    private var backCaptureDevice: AVCaptureDevice?
+    private var frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
+    private var backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
     
     // MARK: - Methods
     
@@ -62,10 +65,11 @@ extension CameraManager: CameraManagerProtocol {
     }
     
     ///
-    /// Setups the Camera Preview View.
+    /// Setups the Front and Back Camera Preview Views.
     ///
-    func setupCameraOutput(mainCameraPreviewView: UIView) {
-        self.mainCameraPreviewView = mainCameraPreviewView
+    func setupCameraOutputs(frontCameraPreviewView: UIView, backCameraPreviewView: UIView) {
+        self.frontCameraPreviewView = frontCameraPreviewView
+        self.backCameraPreviewView = backCameraPreviewView
     }
     
     ///
@@ -73,39 +77,58 @@ extension CameraManager: CameraManagerProtocol {
     ///
     func setupCameraSession() {
         // Creates the MultiCam Capture Session.
-        self.session = AVCaptureSession() // AVCaptureMultiCamSession()
+        self.session = AVCaptureMultiCamSession()
     }
     
     ///
-    /// Checks if there is any device (Camera) ready.
+    /// Checks if there is any Front capture device (camera) ready.
     ///
-    func isMainCaptureDeviceReady() -> Bool {
-        let discoverSessions = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInDualCamera, .builtInWideAngleCamera],
-                                                                mediaType: .video,
-                                                                position: .back)
+    func isFrontCaptureDeviceReady() -> Bool {
+        let frontDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
+                                                                     mediaType: .video,
+                                                                     position: .back)
         
-        let devices = discoverSessions.devices
+        let frontDevices = frontDiscoverySession.devices
         
-        if devices.isEmpty {
-            print("No MainCaptureDevice ready")
+        if frontDevices.isEmpty {
+            print("NO Front Capture Device ready.")
             return false
         } else {
-            self.mainCaptureDevice = devices.first
+            self.frontCaptureDevice = frontDevices.first
             return true
         }
     }
     
     ///
-    /// Displays the main capture device (camera) output in the Preview View.
+    /// Checks if there is any Back capture device (camera) ready.
     ///
-    func displayMainCaptureDeviceOutput() {
-        guard let mainCameraPreviewView = self.mainCameraPreviewView,
-              let mainCaptureDevice = self.mainCaptureDevice,
-              let mainCaptureDeviceInput = try? AVCaptureDeviceInput(device: mainCaptureDevice),
-              let session = self.session,
-              session.canAddInput(mainCaptureDeviceInput) else { return }
+    func isBackCaptureDeviceReady() -> Bool {
+        let backDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
+                                                                    mediaType: .video,
+                                                                    position: .front)
         
-        session.addInput(mainCaptureDeviceInput)
+        let backDevices = backDiscoverySession.devices
+        
+        if backDevices.isEmpty {
+            print("NO Back Capture Device ready.")
+            return false
+        } else {
+            self.backCaptureDevice = backDevices.first
+            return true
+        }
+    }
+    
+    ///
+    /// Displays the Front Capture Device (camera) output in the Preview View.
+    ///
+    func displayFrontCaptureDeviceOutput() {
+        guard let frontCameraPreviewView = self.frontCameraPreviewView,
+              let frontCaptureDevice = self.frontCaptureDevice,
+              let frontCaptureDeviceInput = try? AVCaptureDeviceInput(device: frontCaptureDevice),
+              let session = self.session,
+              session.canAddInput(frontCaptureDeviceInput) else { return }
+        
+        session.addInput(frontCaptureDeviceInput)
         
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let session = self?.session else { return }
@@ -113,12 +136,38 @@ extension CameraManager: CameraManagerProtocol {
             session.startRunning()
         }
         
-        mainCaptureDevicePreviewLayer.session = session
-        mainCaptureDevicePreviewLayer.frame.size = mainCameraPreviewView.frame.size
-        mainCaptureDevicePreviewLayer.videoGravity = .resizeAspect
-        mainCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
+        frontCaptureDevicePreviewLayer.session = session
+        frontCaptureDevicePreviewLayer.frame.size = frontCameraPreviewView.frame.size
+        frontCaptureDevicePreviewLayer.videoGravity = .resizeAspect
+        frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
         
-        mainCameraPreviewView.layer.addSublayer(mainCaptureDevicePreviewLayer)
+        frontCameraPreviewView.layer.addSublayer(frontCaptureDevicePreviewLayer)
+    }
+    
+    ///
+    /// Displays the Back Capture Device (camera) output in the Preview View.
+    ///
+    func displayBackCaptureDeviceOutput() {
+        guard let backCameraPreviewView = self.backCameraPreviewView,
+              let backCaptureDevice = self.backCaptureDevice,
+              let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
+              let session = self.session,
+              session.canAddInput(backCaptureDeviceInput) else { return }
+        
+        session.addInput(backCaptureDeviceInput)
+        
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let session = self?.session else { return }
+            
+            session.startRunning()
+        }
+        
+        backCaptureDevicePreviewLayer.session = session
+        backCaptureDevicePreviewLayer.frame.size = backCameraPreviewView.frame.size
+        backCaptureDevicePreviewLayer.videoGravity = .resizeAspect
+        backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
+        
+        backCameraPreviewView.layer.addSublayer(backCaptureDevicePreviewLayer)
     }
     
 }
