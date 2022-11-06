@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A0CE28629108AFE0094597D /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0CE28529108AFE0094597D /* CameraManager.swift */; };
+		1A0CE2882910911E0094597D /* CameraManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0CE2872910911E0094597D /* CameraManagerProtocol.swift */; };
 		1A88451F290ED8E400FC5675 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88451E290ED8E400FC5675 /* AppDelegate.swift */; };
 		1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A884520290ED8E400FC5675 /* SceneDelegate.swift */; };
 		1A884528290ED8E500FC5675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A884527290ED8E500FC5675 /* Assets.xcassets */; };
@@ -36,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A0CE28529108AFE0094597D /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		1A0CE2872910911E0094597D /* CameraManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerProtocol.swift; sourceTree = "<group>"; };
 		1A88451B290ED8E400FC5675 /* Dual Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dual Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A88451E290ED8E400FC5675 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A884520290ED8E400FC5675 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +80,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A0CE28429108AE70094597D /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				1A0CE2872910911E0094597D /* CameraManagerProtocol.swift */,
+				1A0CE28529108AFE0094597D /* CameraManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		1A884512290ED8E400FC5675 = {
 			isa = PBXGroup;
 			children = (
@@ -99,6 +112,7 @@
 		1A88451D290ED8E400FC5675 /* Dual Camera */ = {
 			isa = PBXGroup;
 			children = (
+				1A0CE28429108AE70094597D /* Managers */,
 				1A88454E290EDA7E00FC5675 /* Views */,
 				1A88451E290ED8E400FC5675 /* AppDelegate.swift */,
 				1A884520290ED8E400FC5675 /* SceneDelegate.swift */,
@@ -276,6 +290,8 @@
 			files = (
 				1A88451F290ED8E400FC5675 /* AppDelegate.swift in Sources */,
 				1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */,
+				1A0CE2882910911E0094597D /* CameraManagerProtocol.swift in Sources */,
+				1A0CE28629108AFE0094597D /* CameraManager.swift in Sources */,
 				1A884552290EDAC000FC5675 /* CamerasViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

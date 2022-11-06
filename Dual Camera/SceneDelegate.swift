@@ -20,7 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let newWindow = UIWindow(windowScene: windowScene)
         
-        let camerasVC = CamerasViewController()
+        let cameraManager: CameraManagerProtocol = CameraManager()
+        let camerasVC = CamerasViewController(cameraManager: cameraManager)
         
         newWindow.rootViewController = camerasVC
         
