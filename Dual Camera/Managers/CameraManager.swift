@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import Photos
 
 final class CameraManager: NSObject {
     
@@ -19,6 +20,8 @@ final class CameraManager: NSObject {
     private var backCaptureDevice: AVCaptureDevice?
     private var frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
     private var backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
+    
+    private var photoOutput: AVCapturePhotoOutput?
     
     // MARK: - Methods
     
@@ -64,20 +67,25 @@ extension CameraManager: CameraManagerProtocol {
         return AVCaptureMultiCamSession.isMultiCamSupported
     }
     
+    func prepareCameras() {
+        photoOutput = AVCapturePhotoOutput()
+        
+        // Creates the MultiCam Capture Session.
+        self.session = AVCaptureMultiCamSession()
+        
+        guard let session = self.session,
+              let photoOutput = self.photoOutput,
+              session.canAddOutput(photoOutput) else { return }
+        
+        session.addOutput(photoOutput)
+    }
+    
     ///
     /// Setups the Front and Back Camera Preview Views.
     ///
     func setupCameraOutputs(frontCameraPreviewView: UIView, backCameraPreviewView: UIView) {
         self.frontCameraPreviewView = frontCameraPreviewView
         self.backCameraPreviewView = backCameraPreviewView
-    }
-    
-    ///
-    /// Setups the Camera Session.
-    ///
-    func setupCameraSession() {
-        // Creates the MultiCam Capture Session.
-        self.session = AVCaptureMultiCamSession()
     }
     
     ///
@@ -168,6 +176,35 @@ extension CameraManager: CameraManagerProtocol {
         backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
         
         backCameraPreviewView.layer.addSublayer(backCaptureDevicePreviewLayer)
+    }
+    
+    func takeFrontAndBackPhoto() {
+        let photoSettings = AVCapturePhotoSettings()
+        if let photoPreviewType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoPreviewType]
+            photoOutput?.capturePhoto(with: photoSettings, delegate: self)
+        }
+    }
+    
+}
+
+extension CameraManager: AVCapturePhotoCaptureDelegate {
+    
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        guard let imageData = photo.fileDataRepresentation(),
+              let photo = UIImage(data: imageData) else { return }
+        
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAsset(from: photo)
+        }, completionHandler: { success, error in
+            if success {
+                print("Success saving photo to gallery (didFinishProcessingPhoto)")
+            } else if let error = error {
+                print("Error didFinishProcessingPhoto saving photo to gallery")
+            } else {
+                // Save photo failed with no error
+            }
+        })
     }
     
 }

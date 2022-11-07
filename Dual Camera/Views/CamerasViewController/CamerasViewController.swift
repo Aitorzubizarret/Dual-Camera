@@ -13,7 +13,13 @@ final class CamerasViewController: UIViewController {
     
     @IBOutlet weak var mainCameraOutputView: UIView!
     @IBOutlet weak var secondaryCameraOutputView: UIView!
+    
     @IBOutlet weak var actionButtonsView: UIView!
+    @IBOutlet weak var galleryPreviewImageView: UIImageView!
+    @IBOutlet weak var takePhotoButton: UIButton!
+    @IBAction func takePhotoButtonTapped(_ sender: Any) {
+        cameraManager.takeFrontAndBackPhoto()
+    }
     
     // MARK: - Properties
     
@@ -33,18 +39,21 @@ final class CamerasViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        setupView()
         checkCameraPermission()
     }
     
     private func setupView() {
         mainCameraOutputView.backgroundColor = UIColor.black
         secondaryCameraOutputView.backgroundColor = UIColor.black
+        galleryPreviewImageView.layer.cornerRadius = 6
+        takePhotoButton.layer.cornerRadius = takePhotoButton.frame.height / 2
     }
     
     private func checkCameraPermission() {
@@ -64,7 +73,7 @@ final class CamerasViewController: UIViewController {
             print("Multicam supported")
             cameraManager.setupCameraOutputs(frontCameraPreviewView: mainCameraOutputView,
                                              backCameraPreviewView: secondaryCameraOutputView)
-            cameraManager.setupCameraSession()
+            cameraManager.prepareCameras()
             
             if cameraManager.isFrontCaptureDeviceReady() {
                 cameraManager.displayFrontCaptureDeviceOutput()
