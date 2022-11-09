@@ -14,11 +14,13 @@ final class CameraManager: NSObject {
     // MARK: - Properties
     
     private var session: AVCaptureMultiCamSession? // AVCaptureSession?
+    
     private var frontCameraPreviewView: UIView?
-    private var backCameraPreviewView: UIView?
     private var frontCaptureDevice: AVCaptureDevice?
-    private var backCaptureDevice: AVCaptureDevice?
     private var frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
+    
+    private var backCameraPreviewView: UIView?
+    private var backCaptureDevice: AVCaptureDevice?
     private var backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
     
     private var photoOutput: AVCapturePhotoOutput?
@@ -94,7 +96,7 @@ extension CameraManager: CameraManagerProtocol {
     func isFrontCaptureDeviceReady() -> Bool {
         let frontDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
                                                                      mediaType: .video,
-                                                                     position: .back)
+                                                                     position: .front)
         
         let frontDevices = frontDiscoverySession.devices
         
@@ -113,7 +115,7 @@ extension CameraManager: CameraManagerProtocol {
     func isBackCaptureDeviceReady() -> Bool {
         let backDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
                                                                     mediaType: .video,
-                                                                    position: .front)
+                                                                    position: .back)
         
         let backDevices = backDiscoverySession.devices
         
@@ -130,7 +132,7 @@ extension CameraManager: CameraManagerProtocol {
     /// Displays the Front Capture Device (camera) output in the Preview View.
     ///
     func displayFrontCaptureDeviceOutput() {
-        guard let frontCameraPreviewView = self.frontCameraPreviewView,
+        guard let backCameraPreviewView = self.backCameraPreviewView,
               let frontCaptureDevice = self.frontCaptureDevice,
               let frontCaptureDeviceInput = try? AVCaptureDeviceInput(device: frontCaptureDevice),
               let session = self.session,
@@ -145,18 +147,18 @@ extension CameraManager: CameraManagerProtocol {
         }
         
         frontCaptureDevicePreviewLayer.session = session
-        frontCaptureDevicePreviewLayer.frame.size = frontCameraPreviewView.frame.size
+        frontCaptureDevicePreviewLayer.frame.size = backCameraPreviewView.frame.size
         frontCaptureDevicePreviewLayer.videoGravity = .resizeAspect
         frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
         
-        frontCameraPreviewView.layer.addSublayer(frontCaptureDevicePreviewLayer)
+        backCameraPreviewView.layer.addSublayer(frontCaptureDevicePreviewLayer)
     }
     
     ///
     /// Displays the Back Capture Device (camera) output in the Preview View.
     ///
     func displayBackCaptureDeviceOutput() {
-        guard let backCameraPreviewView = self.backCameraPreviewView,
+        guard let frontCameraPreviewView = self.frontCameraPreviewView,
               let backCaptureDevice = self.backCaptureDevice,
               let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
               let session = self.session,
@@ -171,11 +173,11 @@ extension CameraManager: CameraManagerProtocol {
         }
         
         backCaptureDevicePreviewLayer.session = session
-        backCaptureDevicePreviewLayer.frame.size = backCameraPreviewView.frame.size
+        backCaptureDevicePreviewLayer.frame.size = frontCameraPreviewView.frame.size
         backCaptureDevicePreviewLayer.videoGravity = .resizeAspect
         backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
         
-        backCameraPreviewView.layer.addSublayer(backCaptureDevicePreviewLayer)
+        frontCameraPreviewView.layer.addSublayer(backCaptureDevicePreviewLayer)
     }
     
     func takeFrontAndBackPhoto() {

@@ -75,16 +75,16 @@ final class CamerasViewController: UIViewController {
                                              backCameraPreviewView: secondaryCameraOutputView)
             cameraManager.prepareCameras()
             
-            if cameraManager.isFrontCaptureDeviceReady() {
-                cameraManager.displayFrontCaptureDeviceOutput()
-            } else {
-                print("No Front Capture Device Ready.")
-            }
-            
             if cameraManager.isBackCaptureDeviceReady() {
                 cameraManager.displayBackCaptureDeviceOutput()
             } else {
                 print("No Back Capture Device Ready.")
+            }
+            
+            if cameraManager.isFrontCaptureDeviceReady() {
+                cameraManager.displayFrontCaptureDeviceOutput()
+            } else {
+                print("No Front Capture Device Ready.")
             }
         } else {
             displayMultiCamNotSupportedAlertView()
