@@ -69,6 +69,29 @@ extension CameraManager: CameraManagerProtocol {
         return AVCaptureMultiCamSession.isMultiCamSupported
     }
     
+    ///
+    /// Stops the session.
+    ///
+    func stop() {
+        print("Stop")
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let session = self?.session else { return }
+            
+            session.stopRunning()
+        }
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let mainPreviewView = self?.backCameraPreviewView,
+                  let secondaryPreviewView = self?.frontCameraPreviewView else { return }
+            
+            mainPreviewView.layer.sublayers = nil
+            mainPreviewView.backgroundColor = UIColor.black
+            
+            secondaryPreviewView.layer.sublayers = nil
+            secondaryPreviewView.backgroundColor = UIColor.black
+        }
+    }
+    
     func prepareCameras() {
         photoOutput = AVCapturePhotoOutput()
         
