@@ -24,7 +24,7 @@ final class CameraManager: NSObject {
     private var backCaptureDevice: AVCaptureDevice?
     private var backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
     
-    private var photoOutput: AVCapturePhotoOutput?
+    private var backCameraOutput: AVCapturePhotoOutput?
     
     // MARK: - Methods
     
@@ -40,13 +40,13 @@ final class CameraManager: NSObject {
     ///
     private func createOutputsAndAddToSession() {
         // Create the Output.
-        photoOutput = AVCapturePhotoOutput()
+        backCameraOutput = AVCapturePhotoOutput()
         
         guard let session = self.session,
-              let photoOutput = self.photoOutput,
-              session.canAddOutput(photoOutput) else { return }
+              let backCameraOutput = self.backCameraOutput,
+              session.canAddOutput(backCameraOutput) else { return }
         
-        session.addOutput(photoOutput)
+        session.addOutput(backCameraOutput)
     }
     
     ///
@@ -210,7 +210,7 @@ extension CameraManager: CameraManagerProtocol {
         let photoSettings = AVCapturePhotoSettings()
         if let photoPreviewType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
             photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoPreviewType]
-            photoOutput?.capturePhoto(with: photoSettings, delegate: self)
+            backCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
         }
     }
     
