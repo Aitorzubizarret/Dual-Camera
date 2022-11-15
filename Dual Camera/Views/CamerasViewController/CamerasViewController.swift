@@ -71,21 +71,10 @@ final class CamerasViewController: UIViewController {
     private func checkMultiCamSupport() {
         if cameraManager.isMultiCamSupported() {
             print("Multicam supported")
-            cameraManager.setupCameraOutputs(frontCameraPreviewView: mainCameraOutputView,
-                                             backCameraPreviewView: secondaryCameraOutputView)
-            cameraManager.prepareCameras()
             
-            if cameraManager.isBackCaptureDeviceReady() {
-                cameraManager.displayBackCaptureDeviceOutput()
-            } else {
-                print("No Back Capture Device Ready.")
-            }
-            
-            if cameraManager.isFrontCaptureDeviceReady() {
-                cameraManager.displayFrontCaptureDeviceOutput()
-            } else {
-                print("No Front Capture Device Ready.")
-            }
+            cameraManager.setup(mainPreviewView: mainCameraOutputView,
+                                secondaryPreviewView: secondaryCameraOutputView)
+            cameraManager.start()
         } else {
             displayMultiCamNotSupportedAlertView()
         }

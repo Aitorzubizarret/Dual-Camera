@@ -11,12 +11,8 @@ import AVFoundation
 protocol CameraManagerProtocol {
     func hasCameraPermission(completion: @escaping(Bool) -> Void)
     func isMultiCamSupported() -> Bool
+    func setup(mainPreviewView: UIView, secondaryPreviewView: UIView)
+    func start()
     func stop()
-    func prepareCameras()
-    func setupCameraOutputs(frontCameraPreviewView: UIView, backCameraPreviewView: UIView)
-    func isFrontCaptureDeviceReady() -> Bool
-    func isBackCaptureDeviceReady() -> Bool
-    func displayFrontCaptureDeviceOutput()
-    func displayBackCaptureDeviceOutput()
     func takeFrontAndBackPhoto()
 }
