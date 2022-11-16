@@ -50,9 +50,19 @@ final class CamerasViewController: UIViewController {
     }
     
     private func setupView() {
+        // View.
         mainCameraOutputView.backgroundColor = UIColor.black
         secondaryCameraOutputView.backgroundColor = UIColor.black
+        
+        // ImageView.
         galleryPreviewImageView.layer.cornerRadius = 6
+        
+        // Tap Gesture Recognizer.
+        let tapGR = UITapGestureRecognizer(target: self, action: #selector(showPhotoAlbum))
+        galleryPreviewImageView.addGestureRecognizer(tapGR)
+        galleryPreviewImageView.isUserInteractionEnabled = true
+        
+        // Button.
         takePhotoButton.layer.cornerRadius = takePhotoButton.frame.height / 2
     }
     
@@ -118,6 +128,11 @@ final class CamerasViewController: UIViewController {
             
             self?.present(alertView, animated: true)
         }
+    }
+    
+    @objc private func showPhotoAlbum() {
+        let photoAlbumVC = PhotoAlbumViewController()
+        show(photoAlbumVC, sender: self)
     }
     
 }
