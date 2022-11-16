@@ -43,10 +43,14 @@ final class CamerasViewController: UIViewController {
         setupView()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         checkCameraPermission()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        cameraManager.stop()
     }
     
     private func setupView() {
@@ -132,7 +136,9 @@ final class CamerasViewController: UIViewController {
     
     @objc private func showPhotoAlbum() {
         let photoAlbumVC = PhotoAlbumViewController()
-        show(photoAlbumVC, sender: self)
+        let navController = UINavigationController(rootViewController: photoAlbumVC)
+        navController.modalPresentationStyle = .fullScreen
+        show(navController, sender: self)
     }
     
 }
