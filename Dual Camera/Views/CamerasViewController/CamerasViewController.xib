@@ -12,9 +12,8 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CamerasViewController" customModule="Dual_Camera" customModuleProvider="target">
             <connections>
                 <outlet property="actionButtonsView" destination="qhL-aF-8IN" id="v5e-RR-B6p"/>
+                <outlet property="dualCameraView" destination="gMg-6d-NUQ" id="xTV-8E-MIY"/>
                 <outlet property="galleryPreviewImageView" destination="kVt-hy-o8C" id="TFa-Q8-JAD"/>
-                <outlet property="mainCameraOutputView" destination="sSE-Bu-Fuh" id="7is-f9-QG6"/>
-                <outlet property="secondaryCameraOutputView" destination="Aeg-Ep-KIm" id="56l-05-3N1"/>
                 <outlet property="takePhotoButton" destination="Khn-E3-9cs" id="lPI-eP-uQf"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -24,13 +23,9 @@
             <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sSE-Bu-Fuh">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gMg-6d-NUQ" customClass="DualCameraView" customModule="Dual_Camera" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="47" width="390" height="663"/>
-                    <color key="backgroundColor" systemColor="systemGray6Color"/>
-                </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Aeg-Ep-KIm">
-                    <rect key="frame" x="243" y="481" width="117" height="199"/>
-                    <color key="backgroundColor" systemColor="systemGray4Color"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qhL-aF-8IN">
                     <rect key="frame" x="0.0" y="710" width="390" height="100"/>
@@ -71,16 +66,12 @@
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="Aeg-Ep-KIm" firstAttribute="width" secondItem="sSE-Bu-Fuh" secondAttribute="width" multiplier="0.3" id="3wk-cJ-tTB"/>
-                <constraint firstItem="sSE-Bu-Fuh" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="IKf-iA-fRz"/>
-                <constraint firstAttribute="trailing" secondItem="sSE-Bu-Fuh" secondAttribute="trailing" id="NYs-MZ-6bm"/>
-                <constraint firstItem="qhL-aF-8IN" firstAttribute="top" secondItem="sSE-Bu-Fuh" secondAttribute="bottom" id="YeL-bG-9Hh"/>
-                <constraint firstItem="qhL-aF-8IN" firstAttribute="top" secondItem="Aeg-Ep-KIm" secondAttribute="bottom" constant="30" id="b7e-t3-TgM"/>
-                <constraint firstItem="sSE-Bu-Fuh" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="cQH-Wr-nmh"/>
-                <constraint firstItem="Aeg-Ep-KIm" firstAttribute="height" secondItem="sSE-Bu-Fuh" secondAttribute="height" multiplier="0.3" id="fcN-vB-V1j"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="Aeg-Ep-KIm" secondAttribute="trailing" constant="30" id="g2C-uX-rQ1"/>
+                <constraint firstItem="gMg-6d-NUQ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="Ms7-Z8-6fw"/>
+                <constraint firstAttribute="trailing" secondItem="gMg-6d-NUQ" secondAttribute="trailing" id="ggm-Qc-5sa"/>
+                <constraint firstItem="qhL-aF-8IN" firstAttribute="top" secondItem="gMg-6d-NUQ" secondAttribute="bottom" id="pm9-N3-hW6"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="qhL-aF-8IN" secondAttribute="trailing" id="tcY-uW-5cT"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="qhL-aF-8IN" secondAttribute="bottom" id="teT-3w-Ejc"/>
+                <constraint firstItem="gMg-6d-NUQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="v4z-pD-Vng"/>
                 <constraint firstItem="qhL-aF-8IN" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="vDL-fZ-MLU"/>
             </constraints>
             <point key="canvasLocation" x="42" y="21"/>
@@ -88,8 +79,8 @@
     </objects>
     <resources>
         <image name="circlebadge.2.fill" catalog="system" width="128" height="92"/>
-        <systemColor name="systemGray4Color">
-            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray6Color">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

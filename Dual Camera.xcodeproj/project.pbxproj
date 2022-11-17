@@ -11,6 +11,8 @@
 		1A0CE2882910911E0094597D /* CameraManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0CE2872910911E0094597D /* CameraManagerProtocol.swift */; };
 		1A308B3B29251DC000E226B8 /* PhotoAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A308B3929251DC000E226B8 /* PhotoAlbumViewController.swift */; };
 		1A308B3C29251DC000E226B8 /* PhotoAlbumViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A308B3A29251DC000E226B8 /* PhotoAlbumViewController.xib */; };
+		1A308B3F29257E6200E226B8 /* DualCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A308B3E29257E6200E226B8 /* DualCameraView.swift */; };
+		1A308B4129257E7700E226B8 /* DualCameraView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A308B4029257E7700E226B8 /* DualCameraView.xib */; };
 		1A88451F290ED8E400FC5675 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88451E290ED8E400FC5675 /* AppDelegate.swift */; };
 		1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A884520290ED8E400FC5675 /* SceneDelegate.swift */; };
 		1A884528290ED8E500FC5675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A884527290ED8E500FC5675 /* Assets.xcassets */; };
@@ -44,6 +46,8 @@
 		1A0CE2872910911E0094597D /* CameraManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerProtocol.swift; sourceTree = "<group>"; };
 		1A308B3929251DC000E226B8 /* PhotoAlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbumViewController.swift; sourceTree = "<group>"; };
 		1A308B3A29251DC000E226B8 /* PhotoAlbumViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotoAlbumViewController.xib; sourceTree = "<group>"; };
+		1A308B3E29257E6200E226B8 /* DualCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraView.swift; sourceTree = "<group>"; };
+		1A308B4029257E7700E226B8 /* DualCameraView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DualCameraView.xib; sourceTree = "<group>"; };
 		1A88451B290ED8E400FC5675 /* Dual Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dual Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A88451E290ED8E400FC5675 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A884520290ED8E400FC5675 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -102,6 +106,15 @@
 			path = PhotoAlbumViewController;
 			sourceTree = "<group>";
 		};
+		1A308B3D29257E3E00E226B8 /* DualCameraView */ = {
+			isa = PBXGroup;
+			children = (
+				1A308B3E29257E6200E226B8 /* DualCameraView.swift */,
+				1A308B4029257E7700E226B8 /* DualCameraView.xib */,
+			);
+			path = DualCameraView;
+			sourceTree = "<group>";
+		};
 		1A884512290ED8E400FC5675 = {
 			isa = PBXGroup;
 			children = (
@@ -157,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				1A88454F290EDA9A00FC5675 /* CamerasViewController */,
+				1A308B3D29257E3E00E226B8 /* DualCameraView */,
 				1A308B3829251DA000E226B8 /* PhotoAlbumViewController */,
 			);
 			path = Views;
@@ -278,6 +292,7 @@
 				1A88452B290ED8E500FC5675 /* LaunchScreen.storyboard in Resources */,
 				1A884528290ED8E500FC5675 /* Assets.xcassets in Resources */,
 				1A884553290EDAC000FC5675 /* CamerasViewController.xib in Resources */,
+				1A308B4129257E7700E226B8 /* DualCameraView.xib in Resources */,
 				1A308B3C29251DC000E226B8 /* PhotoAlbumViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,6 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A308B3F29257E6200E226B8 /* DualCameraView.swift in Sources */,
 				1A88451F290ED8E400FC5675 /* AppDelegate.swift in Sources */,
 				1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */,
 				1A0CE2882910911E0094597D /* CameraManagerProtocol.swift in Sources */,

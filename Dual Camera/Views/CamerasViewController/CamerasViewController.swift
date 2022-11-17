@@ -11,8 +11,7 @@ final class CamerasViewController: UIViewController {
     
     // MARK: - UI Elements
     
-    @IBOutlet weak var mainCameraOutputView: UIView!
-    @IBOutlet weak var secondaryCameraOutputView: UIView!
+    @IBOutlet weak var dualCameraView: DualCameraView!
     
     @IBOutlet weak var actionButtonsView: UIView!
     @IBOutlet weak var galleryPreviewImageView: UIImageView!
@@ -43,20 +42,21 @@ final class CamerasViewController: UIViewController {
         setupView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        checkCameraPermission()
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         cameraManager.stop()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        dualCameraView.setupViewSize(maxWidth: dualCameraView.frame.width, maxHeight: dualCameraView.frame.height)
+        
+        checkCameraPermission()
+    }
+    
     private func setupView() {
         // View.
-        mainCameraOutputView.backgroundColor = UIColor.black
-        secondaryCameraOutputView.backgroundColor = UIColor.black
+        dualCameraView.backgroundColor = UIColor.black
         
         // ImageView.
         galleryPreviewImageView.layer.cornerRadius = 6
@@ -86,8 +86,8 @@ final class CamerasViewController: UIViewController {
         if cameraManager.isMultiCamSupported() {
             print("Multicam supported")
             
-            cameraManager.setup(mainPreviewView: mainCameraOutputView,
-                                secondaryPreviewView: secondaryCameraOutputView)
+            cameraManager.setup(dualCameraView: dualCameraView)
+            
             cameraManager.start()
         } else {
             displayMultiCamNotSupportedAlertView()

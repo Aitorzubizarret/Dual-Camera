@@ -15,8 +15,7 @@ final class CameraManager: NSObject {
     
     private var session: AVCaptureMultiCamSession? // AVCaptureSession?
     
-    private var mainPreviewView: UIView?
-    private var secondaryPreviewView: UIView?
+    private var dualCameraView: DualCameraView?
     
     private var frontCaptureDevice: AVCaptureDevice?
     private var frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
@@ -66,7 +65,8 @@ final class CameraManager: NSObject {
             self.frontCaptureDevice = frontDevices.first
             
             // Displays the Front Capture Device (camera) output in the Preview View.
-            guard let secondaryPreviewView = self.secondaryPreviewView,
+            guard let dualCameraView = self.dualCameraView,
+                  let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
                   let frontCaptureDevice = self.frontCaptureDevice,
                   let frontCaptureDeviceInput = try? AVCaptureDeviceInput(device: frontCaptureDevice),
                   let session = self.session,
@@ -75,11 +75,11 @@ final class CameraManager: NSObject {
             session.addInput(frontCaptureDeviceInput)
             
             frontCaptureDevicePreviewLayer.session = session
-            frontCaptureDevicePreviewLayer.frame.size = secondaryPreviewView.frame.size
-            frontCaptureDevicePreviewLayer.videoGravity = .resizeAspect
+            frontCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
+            frontCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
             frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
             
-            secondaryPreviewView.layer.addSublayer(frontCaptureDevicePreviewLayer)
+            secondaryCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
         }
     }
     
@@ -100,7 +100,8 @@ final class CameraManager: NSObject {
             self.backCaptureDevice = backDevices.first
             
             // Displays the Back Capture Device (camera) output in the Preview View.
-            guard let mainPreviewView = self.mainPreviewView,
+            guard let dualCameraView = self.dualCameraView,
+                  let mainCameraLayer = dualCameraView.mainCameraLayer,
                   let backCaptureDevice = self.backCaptureDevice,
                   let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
                   let session = self.session,
@@ -109,11 +110,11 @@ final class CameraManager: NSObject {
             session.addInput(backCaptureDeviceInput)
             
             backCaptureDevicePreviewLayer.session = session
-            backCaptureDevicePreviewLayer.frame.size = mainPreviewView.frame.size
-            backCaptureDevicePreviewLayer.videoGravity = .resizeAspect
+            backCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
+            backCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
             backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
             
-            mainPreviewView.layer.addSublayer(backCaptureDevicePreviewLayer)
+            mainCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
         }
     }
     
@@ -159,12 +160,11 @@ extension CameraManager: CameraManagerProtocol {
         return AVCaptureMultiCamSession.isMultiCamSupported
     }
     
-    func setup(mainPreviewView: UIView, secondaryPreviewView: UIView) {
+    func setup(dualCameraView: DualCameraView) {
         print("Start")
         
         // Setups the Front and Back Camera Preview Views.
-        self.mainPreviewView = mainPreviewView
-        self.secondaryPreviewView = secondaryPreviewView
+        self.dualCameraView = dualCameraView
         
         createSession()
         
@@ -195,14 +195,10 @@ extension CameraManager: CameraManagerProtocol {
         }
         
         DispatchQueue.main.async { [weak self] in
-            guard let mainPreviewView = self?.mainPreviewView,
-                  let secondaryPreviewView = self?.secondaryPreviewView else { return }
+            guard let dualCameraView = self?.dualCameraView else { return }
             
-            mainPreviewView.layer.sublayers = nil
-            mainPreviewView.backgroundColor = UIColor.black
-            
-            secondaryPreviewView.layer.sublayers = nil
-            secondaryPreviewView.backgroundColor = UIColor.black
+            dualCameraView.layer.sublayers = nil
+            dualCameraView.backgroundColor = UIColor.black
         }
     }
     
