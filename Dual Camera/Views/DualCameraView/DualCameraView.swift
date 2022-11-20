@@ -56,6 +56,10 @@ final class DualCameraView: UIView {
                                             y: secondaryCameraLayerYPosition - 10,
                                             width: secondaryCameraLayerWidth,
                                             height: secondaryCameraLayerHeight)
+        secondaryCameraLayer.cornerRadius = 10
+        secondaryCameraLayer.borderWidth = 1
+        secondaryCameraLayer.borderColor = UIColor.black.cgColor
+        secondaryCameraLayer.masksToBounds = true
         
         self.layer.addSublayer(mainCameraLayer)
         self.layer.addSublayer(secondaryCameraLayer)
