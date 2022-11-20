@@ -13,6 +13,11 @@ final class CamerasViewController: UIViewController {
     
     @IBOutlet weak var dualCameraView: DualCameraView!
     
+    @IBOutlet weak var changeCamerasButton: UIButton!
+    @IBAction func changeCamerasButtonTapped(_ sender: Any) {
+        cameraManager.changeCameras()
+    }
+    
     @IBOutlet weak var actionButtonsView: UIView!
     @IBOutlet weak var galleryPreviewImageView: UIImageView!
     @IBOutlet weak var takePhotoButton: UIButton!
@@ -68,6 +73,10 @@ final class CamerasViewController: UIViewController {
         
         // Button.
         takePhotoButton.layer.cornerRadius = takePhotoButton.frame.height / 2
+        changeCamerasButton.layer.cornerRadius = changeCamerasButton.frame.height / 2
+        changeCamerasButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        changeCamerasButton.layer.borderWidth = 1
+        changeCamerasButton.layer.borderColor = UIColor.white.withAlphaComponent(0.6).cgColor
     }
     
     private func checkCameraPermission() {

@@ -16,11 +16,14 @@ final class CameraManager: NSObject {
     private var session: AVCaptureMultiCamSession? // AVCaptureSession?
     
     private var dualCameraView: DualCameraView?
+    private var isBackCameraMain: Bool = true
     
     private var frontCaptureDevice: AVCaptureDevice?
+    private var frontCaptureDeviceInput: AVCaptureDeviceInput?
     private var frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
     
     private var backCaptureDevice: AVCaptureDevice?
+    private var backCaptureDeviceInput: AVCaptureDeviceInput?
     private var backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
     
     private var backCameraOutput: AVCapturePhotoOutput?
@@ -51,21 +54,13 @@ final class CameraManager: NSObject {
         } else {
             backCaptureDevice = backCaptureDevices.first
             
-            guard let dualCameraView = self.dualCameraView,
-                  let mainCameraLayer = dualCameraView.mainCameraLayer,
-                  let backCaptureDevice = self.backCaptureDevice,
+            guard let backCaptureDevice = self.backCaptureDevice,
                   let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
                   let session = self.session,
                   session.canAddInput(backCaptureDeviceInput) else { return }
             
+            self.backCaptureDeviceInput = backCaptureDeviceInput
             session.addInput(backCaptureDeviceInput)
-            
-            backCaptureDevicePreviewLayer.session = session
-            backCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
-            backCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
-            backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
-            
-            mainCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
             
             // Create the Output.
             backCameraOutput = AVCapturePhotoOutput()
@@ -74,6 +69,28 @@ final class CameraManager: NSObject {
                   session.canAddOutput(backCameraOutput) else { return }
             
             session.addOutput(backCameraOutput)
+        }
+    }
+    
+    private func displayBackCamera() {
+        guard let dualCameraView = self.dualCameraView,
+              let mainCameraLayer = dualCameraView.mainCameraLayer,
+              let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
+              let session = self.session else { return }
+        
+        // Displays the Back Capture Device (camera) output in the Preview View.
+        backCaptureDevicePreviewLayer.session = session
+        backCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
+        backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
+        
+        if isBackCameraMain {
+            backCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
+            mainCameraLayer.sublayers = nil
+            mainCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
+        } else {
+            backCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
+            secondaryCameraLayer.sublayers = nil
+            secondaryCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
         }
     }
     
@@ -93,22 +110,13 @@ final class CameraManager: NSObject {
         } else {
             self.frontCaptureDevice = frontDevices.first
             
-            // Displays the Front Capture Device (camera) output in the Preview View.
-            guard let dualCameraView = self.dualCameraView,
-                  let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
-                  let frontCaptureDevice = self.frontCaptureDevice,
+            guard let frontCaptureDevice = self.frontCaptureDevice,
                   let frontCaptureDeviceInput = try? AVCaptureDeviceInput(device: frontCaptureDevice),
                   let session = self.session,
                   session.canAddInput(frontCaptureDeviceInput) else { return }
             
+            self.frontCaptureDeviceInput = frontCaptureDeviceInput
             session.addInput(frontCaptureDeviceInput)
-            
-            frontCaptureDevicePreviewLayer.session = session
-            frontCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
-            frontCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
-            frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
-            
-            secondaryCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
             
             // Create the Output.
             frontCameraOutput = AVCapturePhotoOutput()
@@ -117,6 +125,28 @@ final class CameraManager: NSObject {
                   session.canAddOutput(frontCameraOutput) else { return }
             
             session.addOutput(frontCameraOutput)
+        }
+    }
+    
+    private func displayFrontCamera() {
+        guard let dualCameraView = self.dualCameraView,
+              let mainCameraLayer = dualCameraView.mainCameraLayer,
+              let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
+              let session = self.session else { return }
+        
+        // Displays the Front Capture Device (camera) output in the Preview View.
+        frontCaptureDevicePreviewLayer.session = session
+        frontCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
+        frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
+        
+        if isBackCameraMain {
+            frontCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
+            secondaryCameraLayer.sublayers = nil
+            secondaryCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
+        } else {
+            frontCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
+            mainCameraLayer.sublayers = nil
+            mainCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
         }
     }
     
@@ -171,8 +201,10 @@ extension CameraManager: CameraManagerProtocol {
         createSession()
         
         configureBackCamera()
+        displayBackCamera()
         
         configureFrontCamera()
+        displayFrontCamera()
     }
     
     func start() {
@@ -209,6 +241,12 @@ extension CameraManager: CameraManagerProtocol {
             backCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
             frontCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
         }
+    }
+    
+    func changeCameras() {
+        isBackCameraMain.toggle()
+        displayBackCamera()
+        displayFrontCamera()
     }
     
 }

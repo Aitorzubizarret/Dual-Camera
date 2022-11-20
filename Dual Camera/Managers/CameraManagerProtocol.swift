@@ -15,4 +15,5 @@ protocol CameraManagerProtocol {
     func start()
     func stop()
     func takeFrontAndBackPhoto()
+    func changeCameras()
 }
