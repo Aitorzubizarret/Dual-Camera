@@ -13,6 +13,7 @@ final class DualCameraView: UIView {
     
     var mainCameraLayer: CALayer?
     var secondaryCameraLayer: CALayer?
+    private var secondaryCameraLayerOuterBorder: CALayer?
     
     // MARK: - Methods
     
@@ -37,11 +38,13 @@ final class DualCameraView: UIView {
     private func setupView() {
         mainCameraLayer = CALayer()
         secondaryCameraLayer = CALayer()
+        secondaryCameraLayerOuterBorder = CALayer()
     }
     
     func setupViewSize(maxWidth: CGFloat, maxHeight: CGFloat) {
         guard let mainCameraLayer = self.mainCameraLayer,
-              let secondaryCameraLayer = self.secondaryCameraLayer else { return }
+              let secondaryCameraLayer = self.secondaryCameraLayer,
+              let secondaryCameraLayerOuterBorder = self.secondaryCameraLayerOuterBorder else { return }
         
         // Main Camera.
         mainCameraLayer.frame = CGRect(x: 0, y: 0, width: maxWidth, height: maxHeight)
@@ -49,11 +52,11 @@ final class DualCameraView: UIView {
         // Secondary Camera.
         let secondaryCameraLayerWidth: CGFloat = maxWidth/4
         let secondaryCameraLayerHeight: CGFloat = maxHeight/4
-        let secondaryCameraLayerXPosition: CGFloat = maxWidth - secondaryCameraLayerWidth
-        let secondaryCameraLayerYPosition: CGFloat = maxHeight - secondaryCameraLayerHeight
+        let secondaryCameraLayerXPosition: CGFloat = (maxWidth - secondaryCameraLayerWidth) - 10
+        let secondaryCameraLayerYPosition: CGFloat = (maxHeight - secondaryCameraLayerHeight) - 10
         
-        secondaryCameraLayer.frame = CGRect(x: secondaryCameraLayerXPosition - 10,
-                                            y: secondaryCameraLayerYPosition - 10,
+        secondaryCameraLayer.frame = CGRect(x: secondaryCameraLayerXPosition,
+                                            y: secondaryCameraLayerYPosition,
                                             width: secondaryCameraLayerWidth,
                                             height: secondaryCameraLayerHeight)
         secondaryCameraLayer.cornerRadius = 10
@@ -61,8 +64,21 @@ final class DualCameraView: UIView {
         secondaryCameraLayer.borderColor = UIColor.black.cgColor
         secondaryCameraLayer.masksToBounds = true
         
+        // Secondary Camera Outer Border Layer.
+        secondaryCameraLayerOuterBorder.frame = CGRect(x: secondaryCameraLayerXPosition - 1,
+                                                        y: secondaryCameraLayerYPosition - 1,
+                                                        width: secondaryCameraLayerWidth + 2,
+                                                        height: secondaryCameraLayerHeight + 2)
+        secondaryCameraLayerOuterBorder.cornerRadius = 10
+        secondaryCameraLayerOuterBorder.borderWidth = 1
+        secondaryCameraLayerOuterBorder.borderColor = UIColor.white.cgColor
+        secondaryCameraLayerOuterBorder.masksToBounds = true
+        secondaryCameraLayerOuterBorder.addSublayer(secondaryCameraLayer)
+        
+        
         self.layer.addSublayer(mainCameraLayer)
         self.layer.addSublayer(secondaryCameraLayer)
+        self.layer.addSublayer(secondaryCameraLayerOuterBorder)
     }
     
 }
