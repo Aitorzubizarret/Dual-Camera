@@ -29,6 +29,14 @@ final class CameraManager: NSObject {
     private var backCameraOutput: AVCapturePhotoOutput?
     private var frontCameraOutput: AVCapturePhotoOutput?
     
+    private var isPhotoTaken: Bool = false {
+        didSet {
+            createFinalPhoto()
+        }
+    }
+    private var mainPhotoImage: UIImage?
+    private var secondaryPhotoImage: UIImage?
+    
     // MARK: - Methods
     
     ///
@@ -150,6 +158,62 @@ final class CameraManager: NSObject {
         }
     }
     
+    private func createFinalPhoto() {
+        guard isPhotoTaken,
+              let mainPhoto = mainPhotoImage,
+              let secondaryPhoto = secondaryPhotoImage else { return }
+        
+        let bottomView = UIImageView(frame: CGRect(x: 0, y: 0, width: 3034, height: 4032))
+        let frontView = UIImageView(frame: CGRect(x: 2175.5, y: 2924, width: 758.5, height: 1008))
+        
+        // - Set Content mode to what you desire
+        bottomView.contentMode = .scaleAspectFill
+        frontView.contentMode = .scaleAspectFit
+        
+        // - Set Images
+        bottomView.image = mainPhoto
+        frontView.image = secondaryPhoto
+        
+        // - Create UIView
+        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 3034, height: 4032))
+        contentView.addSubview(bottomView)
+        contentView.addSubview(frontView)
+        
+        // - Set Size
+        let size = CGSize(width: 3034, height: 4032)
+        
+        // - Where the magic happens
+        UIGraphicsBeginImageContextWithOptions(size, true, 0)
+        contentView.drawHierarchy(in: contentView.bounds, afterScreenUpdates: true)
+
+        guard let i = UIGraphicsGetImageFromCurrentImageContext(),
+              let data = i.jpegData(compressionQuality: 1.0) else { return }
+        
+        UIGraphicsEndImageContext()
+        
+        if let finalImage = UIImage(data: data) {
+            saveUIImageAsImage(image: finalImage)
+        }
+        
+        isPhotoTaken = false
+        self.mainPhotoImage = nil
+        self.secondaryPhotoImage = nil
+    }
+    
+    private func saveUIImageAsImage(image: UIImage) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAsset(from: image)
+        }, completionHandler: { success, error in
+            if success {
+                print("Success saving photo to gallery (didFinishProcessingPhoto)")
+            } else if let error = error {
+                print("Error didFinishProcessingPhoto saving photo to gallery")
+            } else {
+                // Save photo failed with no error
+            }
+        })
+    }
+    
 }
 
 extension CameraManager: CameraManagerProtocol {
@@ -255,19 +319,14 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation(),
-              let photo = UIImage(data: imageData) else { return }
+              let image = UIImage(data: imageData) else { return }
         
-        PHPhotoLibrary.shared().performChanges({
-            PHAssetChangeRequest.creationRequestForAsset(from: photo)
-        }, completionHandler: { success, error in
-            if success {
-                print("Success saving photo to gallery (didFinishProcessingPhoto)")
-            } else if let error = error {
-                print("Error didFinishProcessingPhoto saving photo to gallery")
-            } else {
-                // Save photo failed with no error
-            }
-        })
+        if mainPhotoImage != nil {
+            secondaryPhotoImage = image
+            isPhotoTaken = true
+        } else {
+            mainPhotoImage = image
+        }
     }
     
 }
