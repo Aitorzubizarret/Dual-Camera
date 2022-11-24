@@ -62,7 +62,7 @@
                             </constraints>
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <state key="normal" title="Button"/>
-                            <buttonConfiguration key="configuration" style="plain" image="circlebadge.2.fill" catalog="system"/>
+                            <buttonConfiguration key="configuration" style="plain" image="circle.circle.fill" catalog="system"/>
                             <connections>
                                 <action selector="takePhotoButtonTapped:" destination="-1" eventType="touchUpInside" id="sOs-Fw-hyT"/>
                             </connections>
@@ -96,7 +96,7 @@
     </objects>
     <resources>
         <image name="arrow.triangle.2.circlepath" catalog="system" width="128" height="104"/>
-        <image name="circlebadge.2.fill" catalog="system" width="128" height="92"/>
+        <image name="circle.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
