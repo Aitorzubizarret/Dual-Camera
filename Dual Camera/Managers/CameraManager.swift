@@ -8,6 +8,7 @@
 import UIKit
 import AVFoundation
 import Photos
+import CoreImage
 
 final class CameraManager: NSObject {
     
@@ -31,7 +32,8 @@ final class CameraManager: NSObject {
     
     private var isPhotoTaken: Bool = false {
         didSet {
-            createFinalPhoto()
+            // createFinalPhoto()
+            createFinalPhotoCoreImage()
         }
     }
     private var mainPhotoImage: UIImage?
@@ -166,23 +168,23 @@ final class CameraManager: NSObject {
         let bottomView = UIImageView(frame: CGRect(x: 0, y: 0, width: 3034, height: 4032))
         let frontView = UIImageView(frame: CGRect(x: 2175.5, y: 2924, width: 758.5, height: 1008))
         
-        // - Set Content mode to what you desire
+        // Set Content mode to what you desire
         bottomView.contentMode = .scaleAspectFill
         frontView.contentMode = .scaleAspectFit
         
-        // - Set Images
+        // Set Images
         bottomView.image = mainPhoto
         frontView.image = secondaryPhoto
         
-        // - Create UIView
+        // Create UIView
         let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 3034, height: 4032))
         contentView.addSubview(bottomView)
         contentView.addSubview(frontView)
         
-        // - Set Size
+        // Set Size
         let size = CGSize(width: 3034, height: 4032)
         
-        // - Where the magic happens
+        // Where the magic happens
         UIGraphicsBeginImageContextWithOptions(size, true, 0)
         contentView.drawHierarchy(in: contentView.bounds, afterScreenUpdates: true)
 
@@ -194,6 +196,55 @@ final class CameraManager: NSObject {
         if let finalImage = UIImage(data: data) {
             saveUIImageAsImage(image: finalImage)
         }
+        
+        isPhotoTaken = false
+        self.mainPhotoImage = nil
+        self.secondaryPhotoImage = nil
+    }
+    
+    private func createFinalPhotoCoreImage() {
+        guard isPhotoTaken,
+              let mainPhoto = mainPhotoImage,
+              let secondaryPhoto = secondaryPhotoImage else { return }
+        
+        // Create CoreImage context.
+        let context = CIContext(options: nil)
+        
+        // Create CIImage's from mainPhoto and secondaryPhoto.
+        guard let ciImageMainPhoto = CIImage(image: mainPhoto),
+              let ciImageSecondaryPhoto = CIImage(image: secondaryPhoto) else { return }
+        
+        // Get size of main photo.
+        let backgroundWidth = ciImageMainPhoto.extent.width
+        let backgroundHeight = ciImageMainPhoto.extent.height
+        
+        // Scale secondary photo.
+        let scaleTransform: CGAffineTransform = CGAffineTransform(scaleX: 0.3, y: 0.3)
+        let ciImageSecondaryPhotoScaled: CIImage = ciImageSecondaryPhoto.transformed(by: scaleTransform)
+        
+        // Calculate coordinates for the secondary photo.
+        let x = backgroundWidth - (((backgroundWidth * 30) / 100) + 50)
+        let y = backgroundHeight - (((backgroundHeight * 30) / 100) + 50)
+        
+        // Position secondary photo.
+        let translateTransform: CGAffineTransform = CGAffineTransform(translationX: x, y: y)
+        let ciImageSecondaryPhotoScaledTranslated: CIImage = ciImageSecondaryPhotoScaled.transformed(by: translateTransform)
+        
+        // Create blend filter.
+        let blendFilter = CIFilter(name: "CISourceOverCompositing")
+        blendFilter?.setValue(ciImageMainPhoto, forKey: kCIInputBackgroundImageKey)
+        blendFilter?.setValue(ciImageSecondaryPhotoScaledTranslated, forKey: kCIInputImageKey)
+        
+        // Apply blend filter to create the ouput CIImage.
+        guard let ciImageFinal = blendFilter?.outputImage else { return }
+        
+        // CIImage -> CGImage.
+        guard let cgiImageFinal = context.createCGImage(ciImageFinal, from: ciImageFinal.extent) else { return }
+        
+        // CGImage -> UIImage (with orientation).
+        let uiimageFinal = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right)
+        
+        saveUIImageAsImage(image: uiimageFinal)
         
         isPhotoTaken = false
         self.mainPhotoImage = nil
