@@ -14,142 +14,31 @@ final class CameraManager: NSObject {
     
     // MARK: - Properties
     
-    private var session: AVCaptureMultiCamSession? // AVCaptureSession?
+    var session: AVCaptureMultiCamSession? // AVCaptureSession?
     
-    private var dualCameraView: DualCameraView?
+    var dualCameraView: DualCameraView?
+    
+    var frontCaptureDevice: AVCaptureDevice?
+    var frontCaptureDeviceInput: AVCaptureDeviceInput?
+    
+    var backCaptureDevice: AVCaptureDevice?
+    var backCaptureDeviceInput: AVCaptureDeviceInput?
+    
+    var backCameraOutput: AVCapturePhotoOutput?
+    var frontCameraOutput: AVCapturePhotoOutput?
+    
     private var isBackCameraMain: Bool = true
-    
-    private var frontCaptureDevice: AVCaptureDevice?
-    private var frontCaptureDeviceInput: AVCaptureDeviceInput?
-    private var frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
-    
-    private var backCaptureDevice: AVCaptureDevice?
-    private var backCaptureDeviceInput: AVCaptureDeviceInput?
-    private var backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
-    
-    private var backCameraOutput: AVCapturePhotoOutput?
-    private var frontCameraOutput: AVCapturePhotoOutput?
-    
     private var isPhotoTaken: Bool = false {
         didSet {
             // createFinalPhoto()
             createFinalPhotoCoreImage()
         }
     }
+    
     private var mainPhotoImage: UIImage?
     private var secondaryPhotoImage: UIImage?
     
     // MARK: - Methods
-    
-    private func createMulticamSession() {
-        self.session = AVCaptureMultiCamSession()
-    }
-    
-    private func configureBackCamera() {
-        // Check if there is any Back Capture Device (Camera) ready.
-        let backCaptureDeviceDiscoverSession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
-                                                                                mediaType: .video,
-                                                                                position: .back)
-        
-        let backCaptureDevices: [AVCaptureDevice] = backCaptureDeviceDiscoverSession.devices
-        
-        if backCaptureDevices.isEmpty {
-            print("No Back Capture Device (Camera) ready")
-        } else {
-            backCaptureDevice = backCaptureDevices.first
-            
-            guard let backCaptureDevice = self.backCaptureDevice,
-                  let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
-                  let session = self.session,
-                  session.canAddInput(backCaptureDeviceInput) else { return }
-            
-            self.backCaptureDeviceInput = backCaptureDeviceInput
-            session.addInput(backCaptureDeviceInput)
-            
-            // Create the Output.
-            backCameraOutput = AVCapturePhotoOutput()
-            
-            guard let backCameraOutput = self.backCameraOutput,
-                  session.canAddOutput(backCameraOutput) else { return }
-            
-            session.addOutput(backCameraOutput)
-        }
-    }
-    
-    private func displayBackCamera() {
-        guard let dualCameraView = self.dualCameraView,
-              let mainCameraLayer = dualCameraView.mainCameraLayer,
-              let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
-              let session = self.session else { return }
-        
-        // Displays the Back Capture Device (camera) output in the Preview View.
-        backCaptureDevicePreviewLayer.session = session
-        backCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
-        backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
-        
-        if isBackCameraMain {
-            backCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
-            mainCameraLayer.sublayers = nil
-            mainCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
-        } else {
-            backCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
-            secondaryCameraLayer.sublayers = nil
-            secondaryCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
-        }
-    }
-    
-    private func configureFrontCamera() {
-        // Checks if there is any Front capture device (camera) ready.
-        let frontDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
-                                                                     mediaType: .video,
-                                                                     position: .front)
-        
-        let frontDevices = frontDiscoverySession.devices
-        
-        if frontDevices.isEmpty {
-            print("NO Front Capture Device ready.")
-        } else {
-            self.frontCaptureDevice = frontDevices.first
-            
-            guard let frontCaptureDevice = self.frontCaptureDevice,
-                  let frontCaptureDeviceInput = try? AVCaptureDeviceInput(device: frontCaptureDevice),
-                  let session = self.session,
-                  session.canAddInput(frontCaptureDeviceInput) else { return }
-            
-            self.frontCaptureDeviceInput = frontCaptureDeviceInput
-            session.addInput(frontCaptureDeviceInput)
-            
-            // Create the Output.
-            frontCameraOutput = AVCapturePhotoOutput()
-            
-            guard let frontCameraOutput = self.frontCameraOutput,
-                  session.canAddOutput(frontCameraOutput) else { return }
-            
-            session.addOutput(frontCameraOutput)
-        }
-    }
-    
-    private func displayFrontCamera() {
-        guard let dualCameraView = self.dualCameraView,
-              let mainCameraLayer = dualCameraView.mainCameraLayer,
-              let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
-              let session = self.session else { return }
-        
-        // Displays the Front Capture Device (camera) output in the Preview View.
-        frontCaptureDevicePreviewLayer.session = session
-        frontCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
-        frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
-        
-        if isBackCameraMain {
-            frontCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
-            secondaryCameraLayer.sublayers = nil
-            secondaryCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
-        } else {
-            frontCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
-            mainCameraLayer.sublayers = nil
-            mainCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
-        }
-    }
     
     private func createFinalPhoto() {
         guard isPhotoTaken,
@@ -303,6 +192,118 @@ extension CameraManager: CameraManagerProtocol {
         
         configureFrontCamera()
         displayFrontCamera()
+    }
+    
+    func configureBackCamera() {
+        // Check if there is any Back Capture Device (Camera) ready.
+        let backCaptureDeviceDiscoverSession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
+                                                                                mediaType: .video,
+                                                                                position: .back)
+        
+        let backCaptureDevices: [AVCaptureDevice] = backCaptureDeviceDiscoverSession.devices
+        
+        if backCaptureDevices.isEmpty {
+            print("No Back Capture Device (Camera) ready")
+        } else {
+            backCaptureDevice = backCaptureDevices.first
+            
+            guard let backCaptureDevice = self.backCaptureDevice,
+                  let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
+                  let session = self.session,
+                  session.canAddInput(backCaptureDeviceInput) else { return }
+            
+            self.backCaptureDeviceInput = backCaptureDeviceInput
+            session.addInput(backCaptureDeviceInput)
+            
+            // Create the Output.
+            backCameraOutput = AVCapturePhotoOutput()
+            
+            guard let backCameraOutput = self.backCameraOutput,
+                  session.canAddOutput(backCameraOutput) else { return }
+            
+            session.addOutput(backCameraOutput)
+        }
+    }
+    
+    func displayBackCamera() {
+        guard let dualCameraView = self.dualCameraView,
+              let mainCameraLayer = dualCameraView.mainCameraLayer,
+              let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
+              let session = self.session else { return }
+        
+        // Displays the Back Capture Device (camera) output in the Preview View.
+        let backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
+        backCaptureDevicePreviewLayer.session = session
+        backCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
+        backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
+        
+        if isBackCameraMain {
+            backCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
+            mainCameraLayer.sublayers = nil
+            mainCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
+        } else {
+            backCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
+            secondaryCameraLayer.sublayers = nil
+            secondaryCameraLayer.addSublayer(backCaptureDevicePreviewLayer)
+        }
+    }
+    
+    func configureFrontCamera() {
+        // Checks if there is any Front capture device (camera) ready.
+        let frontDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
+                                                                     mediaType: .video,
+                                                                     position: .front)
+        
+        let frontDevices = frontDiscoverySession.devices
+        
+        if frontDevices.isEmpty {
+            print("NO Front Capture Device ready.")
+        } else {
+            self.frontCaptureDevice = frontDevices.first
+            
+            guard let frontCaptureDevice = self.frontCaptureDevice,
+                  let frontCaptureDeviceInput = try? AVCaptureDeviceInput(device: frontCaptureDevice),
+                  let session = self.session,
+                  session.canAddInput(frontCaptureDeviceInput) else { return }
+            
+            self.frontCaptureDeviceInput = frontCaptureDeviceInput
+            session.addInput(frontCaptureDeviceInput)
+            
+            // Create the Output.
+            frontCameraOutput = AVCapturePhotoOutput()
+            
+            guard let frontCameraOutput = self.frontCameraOutput,
+                  session.canAddOutput(frontCameraOutput) else { return }
+            
+            session.addOutput(frontCameraOutput)
+        }
+    }
+    
+    func displayFrontCamera() {
+        guard let dualCameraView = self.dualCameraView,
+              let mainCameraLayer = dualCameraView.mainCameraLayer,
+              let secondaryCameraLayer = dualCameraView.secondaryCameraLayer,
+              let session = self.session else { return }
+        
+        // Displays the Front Capture Device (camera) output in the Preview View.
+        let frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
+        frontCaptureDevicePreviewLayer.session = session
+        frontCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
+        frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
+        
+        if isBackCameraMain {
+            frontCaptureDevicePreviewLayer.frame.size = secondaryCameraLayer.frame.size
+            secondaryCameraLayer.sublayers = nil
+            secondaryCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
+        } else {
+            frontCaptureDevicePreviewLayer.frame.size = mainCameraLayer.frame.size
+            mainCameraLayer.sublayers = nil
+            mainCameraLayer.addSublayer(frontCaptureDevicePreviewLayer)
+        }
+    }
+    
+    func createMulticamSession() {
+        self.session = AVCaptureMultiCamSession()
     }
     
     func startSession() {
