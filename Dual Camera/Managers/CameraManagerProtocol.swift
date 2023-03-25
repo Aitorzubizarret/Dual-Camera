@@ -12,8 +12,8 @@ protocol CameraManagerProtocol {
     func hasCameraPermission(completion: @escaping(Bool) -> Void)
     func isMultiCamSupported() -> Bool
     func setup(dualCameraView: DualCameraView)
-    func start()
-    func stop()
+    func startSession()
+    func stopSession()
     func takeFrontAndBackPhoto()
     func changeCameras()
 }

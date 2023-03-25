@@ -41,16 +41,10 @@ final class CameraManager: NSObject {
     
     // MARK: - Methods
     
-    ///
-    /// Creates the (MultiCam) session.
-    ///
-    private func createSession() {
+    private func createMulticamSession() {
         self.session = AVCaptureMultiCamSession()
     }
     
-    ///
-    /// Configures the Back camera.
-    ///
     private func configureBackCamera() {
         // Check if there is any Back Capture Device (Camera) ready.
         let backCaptureDeviceDiscoverSession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
@@ -104,9 +98,6 @@ final class CameraManager: NSObject {
         }
     }
     
-    ///
-    /// Configures the Front camera.
-    ///
     private func configureFrontCamera() {
         // Checks if there is any Front capture device (camera) ready.
         let frontDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera],
@@ -269,9 +260,6 @@ final class CameraManager: NSObject {
 
 extension CameraManager: CameraManagerProtocol {
     
-    ///
-    /// Checks if the App has Camera Permission.
-    ///
     func hasCameraPermission(completion: @escaping (Bool) -> Void) {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         
@@ -300,20 +288,15 @@ extension CameraManager: CameraManagerProtocol {
         }
     }
     
-    ///
-    /// Checks if the iPhone model supports multi camera function.
-    ///
     func isMultiCamSupported() -> Bool {
         return AVCaptureMultiCamSession.isMultiCamSupported
     }
     
     func setup(dualCameraView: DualCameraView) {
-        print("Start")
-        
         // Setups the Front and Back Camera Preview Views.
         self.dualCameraView = dualCameraView
         
-        createSession()
+        createMulticamSession()
         
         configureBackCamera()
         displayBackCamera()
@@ -322,7 +305,7 @@ extension CameraManager: CameraManagerProtocol {
         displayFrontCamera()
     }
     
-    func start() {
+    func startSession() {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let session = self?.session else { return }
             
@@ -330,11 +313,7 @@ extension CameraManager: CameraManagerProtocol {
         }
     }
     
-    ///
-    /// Stops the session.
-    ///
-    func stop() {
-        print("Stop")
+    func stopSession() {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let session = self?.session else { return }
             

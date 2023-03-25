@@ -48,7 +48,7 @@ final class CamerasViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        cameraManager.stop()
+        cameraManager.stopSession()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -97,7 +97,7 @@ final class CamerasViewController: UIViewController {
             
             cameraManager.setup(dualCameraView: dualCameraView)
             
-            cameraManager.start()
+            cameraManager.startSession()
         } else {
             displayMultiCamNotSupportedAlertView()
         }
