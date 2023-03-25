@@ -298,19 +298,28 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation() else { return }
         
-        if mainPhotoData == nil {
-            mainPhotoData = imageData
+        // Checks if the output came from the back camera or the front camera.
+        if isBackCameraMain {
+            if output == backCameraOutput {
+                mainPhotoData = imageData
+            } else {
+                secondaryPhotoData = imageData
+            }
         } else {
-            secondaryPhotoData = imageData
-            
-            guard let mainPhoto = mainPhotoData,
-                  let secondaryPhoto = secondaryPhotoData else { return }
-
-            createFinalPhoto(mainPhoto: mainPhoto, secondaryPhoto: secondaryPhoto)
-
-            mainPhotoData = nil
-            secondaryPhotoData = nil
+            if output == backCameraOutput {
+                secondaryPhotoData = imageData
+            } else {
+                mainPhotoData = imageData
+            }
         }
+        
+        guard let mainPhoto = mainPhotoData,
+              let secondaryPhot = secondaryPhotoData else { return }
+        
+        createFinalPhoto(mainPhoto: mainPhoto, secondaryPhoto: secondaryPhot)
+        
+        mainPhotoData = nil
+        secondaryPhotoData = nil
     }
     
 }
