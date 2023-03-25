@@ -20,79 +20,29 @@ final class CameraManager: NSObject {
     
     var frontCaptureDevice: AVCaptureDevice?
     var frontCaptureDeviceInput: AVCaptureDeviceInput?
+    var frontCaptureDevicePreviewLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer()
     
     var backCaptureDevice: AVCaptureDevice?
     var backCaptureDeviceInput: AVCaptureDeviceInput?
+    var backCaptureDevicePreviewLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer()
     
     var backCameraOutput: AVCapturePhotoOutput?
     var frontCameraOutput: AVCapturePhotoOutput?
     
     private var isBackCameraMain: Bool = true
-    private var isPhotoTaken: Bool = false {
-        didSet {
-            // createFinalPhoto()
-            createFinalPhotoCoreImage()
-        }
-    }
     
-    private var mainPhotoImage: UIImage?
-    private var secondaryPhotoImage: UIImage?
+    private var mainPhotoData: Data?
+    private var secondaryPhotoData: Data?
     
     // MARK: - Methods
     
-    private func createFinalPhoto() {
-        guard isPhotoTaken,
-              let mainPhoto = mainPhotoImage,
-              let secondaryPhoto = secondaryPhotoImage else { return }
+    private func createFinalPhoto(mainPhoto: Data, secondaryPhoto: Data) {
         
-        let bottomView = UIImageView(frame: CGRect(x: 0, y: 0, width: 3034, height: 4032))
-        let frontView = UIImageView(frame: CGRect(x: 2175.5, y: 2924, width: 758.5, height: 1008))
+        // TODO: Check image size
         
-        // Set Content mode to what you desire
-        bottomView.contentMode = .scaleAspectFill
-        frontView.contentMode = .scaleAspectFit
-        
-        // Set Images
-        bottomView.image = mainPhoto
-        frontView.image = secondaryPhoto
-        
-        // Create UIView
-        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 3034, height: 4032))
-        contentView.addSubview(bottomView)
-        contentView.addSubview(frontView)
-        
-        // Set Size
-        let size = CGSize(width: 3034, height: 4032)
-        
-        // Where the magic happens
-        UIGraphicsBeginImageContextWithOptions(size, true, 0)
-        contentView.drawHierarchy(in: contentView.bounds, afterScreenUpdates: true)
-
-        guard let i = UIGraphicsGetImageFromCurrentImageContext(),
-              let data = i.jpegData(compressionQuality: 1.0) else { return }
-        
-        UIGraphicsEndImageContext()
-        
-        if let finalImage = UIImage(data: data) {
-            saveUIImageAsImage(image: finalImage)
-        }
-        
-        isPhotoTaken = false
-        self.mainPhotoImage = nil
-        self.secondaryPhotoImage = nil
-    }
-    
-    private func createFinalPhotoCoreImage() {
-        guard isPhotoTaken,
-              let mainPhoto = mainPhotoImage,
-              let secondaryPhoto = secondaryPhotoImage else { return }
-        
-        // Create CoreImage context.
-        let context = CIContext(options: nil)
-        
-        // Create CIImage's from mainPhoto and secondaryPhoto.
-        guard let ciImageMainPhoto = CIImage(image: mainPhoto),
-              let ciImageSecondaryPhoto = CIImage(image: secondaryPhoto) else { return }
+        // Create two CIImages from received Data.
+        guard let ciImageMainPhoto = CIImage(data: mainPhoto),
+              let ciImageSecondaryPhoto = CIImage(data: secondaryPhoto) else { return }
         
         // Get size of main photo.
         let backgroundWidth = ciImageMainPhoto.extent.width
@@ -118,6 +68,9 @@ final class CameraManager: NSObject {
         // Apply blend filter to create the ouput CIImage.
         guard let ciImageFinal = blendFilter?.outputImage else { return }
         
+        // Create CoreImage context.
+        let context = CIContext(options: nil)
+        
         // CIImage -> CGImage.
         guard let cgiImageFinal = context.createCGImage(ciImageFinal, from: ciImageFinal.extent) else { return }
         
@@ -125,10 +78,6 @@ final class CameraManager: NSObject {
         let uiimageFinal = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right)
         
         saveUIImageAsImage(image: uiimageFinal)
-        
-        isPhotoTaken = false
-        self.mainPhotoImage = nil
-        self.secondaryPhotoImage = nil
     }
     
     private func saveUIImageAsImage(image: UIImage) {
@@ -232,7 +181,6 @@ extension CameraManager: CameraManagerProtocol {
               let session = self.session else { return }
         
         // Displays the Back Capture Device (camera) output in the Preview View.
-        let backCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
         backCaptureDevicePreviewLayer.session = session
         backCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
         backCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
@@ -286,7 +234,6 @@ extension CameraManager: CameraManagerProtocol {
               let session = self.session else { return }
         
         // Displays the Front Capture Device (camera) output in the Preview View.
-        let frontCaptureDevicePreviewLayer = AVCaptureVideoPreviewLayer()
         frontCaptureDevicePreviewLayer.session = session
         frontCaptureDevicePreviewLayer.videoGravity = .resizeAspectFill
         frontCaptureDevicePreviewLayer.connection?.videoOrientation = .portrait
@@ -349,14 +296,20 @@ extension CameraManager: CameraManagerProtocol {
 extension CameraManager: AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard let imageData = photo.fileDataRepresentation(),
-              let image = UIImage(data: imageData) else { return }
+        guard let imageData = photo.fileDataRepresentation() else { return }
         
-        if mainPhotoImage != nil {
-            secondaryPhotoImage = image
-            isPhotoTaken = true
+        if mainPhotoData == nil {
+            mainPhotoData = imageData
         } else {
-            mainPhotoImage = image
+            secondaryPhotoData = imageData
+            
+            guard let mainPhoto = mainPhotoData,
+                  let secondaryPhoto = secondaryPhotoData else { return }
+
+            createFinalPhoto(mainPhoto: mainPhoto, secondaryPhoto: secondaryPhoto)
+
+            mainPhotoData = nil
+            secondaryPhotoData = nil
         }
     }
     
