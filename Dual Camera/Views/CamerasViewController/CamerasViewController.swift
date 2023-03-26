@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 final class CamerasViewController: UIViewController {
     
@@ -144,10 +145,22 @@ final class CamerasViewController: UIViewController {
     }
     
     @objc private func showPhotoAlbum() {
-        let photoAlbumVC = PhotoAlbumViewController()
-        let navController = UINavigationController(rootViewController: photoAlbumVC)
-        navController.modalPresentationStyle = .fullScreen
-        show(navController, sender: self)
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        configuration.selectionLimit = 1
+        
+        let photoPickerVC = PHPickerViewController(configuration: configuration)
+        photoPickerVC.delegate = self
+        
+        self.present(photoPickerVC, animated: true, completion: nil)
+    }
+    
+}
+
+extension CamerasViewController: PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        dismiss(animated: true)
     }
     
 }
