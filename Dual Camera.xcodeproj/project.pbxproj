@@ -88,13 +88,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1A0CE28429108AE70094597D /* Managers */ = {
+		1A0CE28429108AE70094597D /* CameraManager */ = {
 			isa = PBXGroup;
 			children = (
 				1A0CE2872910911E0094597D /* CameraManagerProtocol.swift */,
 				1A0CE28529108AFE0094597D /* CameraManager.swift */,
 			);
-			path = Managers;
+			path = CameraManager;
 			sourceTree = "<group>";
 		};
 		1A308B3829251DA000E226B8 /* PhotoAlbumViewController */ = {
@@ -138,13 +138,11 @@
 		1A88451D290ED8E400FC5675 /* Dual Camera */ = {
 			isa = PBXGroup;
 			children = (
-				1A0CE28429108AE70094597D /* Managers */,
+				1AC2E79629D0CC8E00F7ACD5 /* App */,
+				1AC2E79729D0CCA500F7ACD5 /* Resources */,
+				1AC2E79829D0CCB600F7ACD5 /* Supporting files */,
+				1A0CE28429108AE70094597D /* CameraManager */,
 				1A88454E290EDA7E00FC5675 /* Views */,
-				1A88451E290ED8E400FC5675 /* AppDelegate.swift */,
-				1A884520290ED8E400FC5675 /* SceneDelegate.swift */,
-				1A884527290ED8E500FC5675 /* Assets.xcassets */,
-				1A884529290ED8E500FC5675 /* LaunchScreen.storyboard */,
-				1A88452C290ED8E500FC5675 /* Info.plist */,
 			);
 			path = "Dual Camera";
 			sourceTree = "<group>";
@@ -183,6 +181,32 @@
 				1A884551290EDAC000FC5675 /* CamerasViewController.xib */,
 			);
 			path = CamerasViewController;
+			sourceTree = "<group>";
+		};
+		1AC2E79629D0CC8E00F7ACD5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1A88451E290ED8E400FC5675 /* AppDelegate.swift */,
+				1A884520290ED8E400FC5675 /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		1AC2E79729D0CCA500F7ACD5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1A884527290ED8E500FC5675 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		1AC2E79829D0CCB600F7ACD5 /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+				1A884529290ED8E500FC5675 /* LaunchScreen.storyboard */,
+				1A88452C290ED8E500FC5675 /* Info.plist */,
+			);
+			path = "Supporting files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -495,7 +519,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V9WUS7ZBGW;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Dual Camera/Info.plist";
+				INFOPLIST_FILE = "Dual Camera/Supporting files/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -528,7 +552,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V9WUS7ZBGW;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Dual Camera/Info.plist";
+				INFOPLIST_FILE = "Dual Camera/Supporting files/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
