@@ -68,26 +68,27 @@ final class CameraManager: NSObject {
         // Apply blend filter to create the ouput CIImage.
         guard let ciImageFinal = blendFilter?.outputImage else { return }
         
+        saveImageInLibrary(image: ciImageFinal)
+    }
+    
+    private func saveImageInLibrary(image: CIImage) {
         // Create CoreImage context.
         let context = CIContext(options: nil)
         
         // CIImage -> CGImage.
-        guard let cgiImageFinal = context.createCGImage(ciImageFinal, from: ciImageFinal.extent) else { return }
+        guard let cgiImageFinal = context.createCGImage(image, from: image.extent) else { return }
         
-        // CGImage -> UIImage (with orientation).
-        let uiimageFinal = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right)
-        
-        saveUIImageAsImage(image: uiimageFinal)
-    }
-    
-    private func saveUIImageAsImage(image: UIImage) {
-        PHPhotoLibrary.shared().performChanges({
-            PHAssetChangeRequest.creationRequestForAsset(from: image)
+        let library = PHPhotoLibrary.shared()
+        library.performChanges ({
+            guard let imageData: Data = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right).jpegData(compressionQuality: 1.0) else { return }
+            
+            let request = PHAssetCreationRequest.forAsset()
+            request.addResource(with: .photo, data: imageData, options: nil)
         }, completionHandler: { success, error in
             if success {
                 print("Success saving photo to gallery (didFinishProcessingPhoto)")
             } else if let error = error {
-                print("Error didFinishProcessingPhoto saving photo to gallery")
+                print("Error didFinishProcessingPhoto saving photo to gallery :  \(error)")
             } else {
                 // Save photo failed with no error
             }
@@ -254,7 +255,7 @@ extension CameraManager: CameraManagerProtocol {
     }
     
     func startSession() {
-        DispatchQueue.global(qos: .background).async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in // userInitiated vs .background
             guard let session = self?.session else { return }
             
             session.startRunning()
@@ -262,7 +263,7 @@ extension CameraManager: CameraManagerProtocol {
     }
     
     func stopSession() {
-        DispatchQueue.global(qos: .background).async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in // userInitiated vs .background
             guard let session = self?.session else { return }
             
             session.stopRunning()
