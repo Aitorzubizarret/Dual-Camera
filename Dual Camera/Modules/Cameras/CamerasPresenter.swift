@@ -13,6 +13,7 @@ final class CamerasPresenter {
     
     weak var view: CamerasViewProtocol?
     var cameraManager: CameraManagerProtocol
+    var router: CamerasRouterProtocol?
     
     // MARK: - Methods
     

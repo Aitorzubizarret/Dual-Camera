@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: - View
 
@@ -27,6 +28,7 @@ protocol CamerasPresenterProtocol: AnyObject {
     
     var view: CamerasViewProtocol? { get set }
     var cameraManager: CameraManagerProtocol { get set }
+    var router: CamerasRouterProtocol? { get set }
     
     func viewWillDisappear()
     
@@ -45,6 +47,14 @@ protocol CamerasPresenterToCameraManagerProtocol: AnyObject {
     
     func takePhotoSuccess(finalImageData: Data)
     func takePhotoFailure(error: String)
+    
+}
+
+// MARK: - Router
+
+protocol CamerasRouterProtocol: AnyObject {
+    
+    static func createModule() -> UIViewController
     
 }
 
