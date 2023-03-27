@@ -288,10 +288,6 @@ extension CameraManager: CameraManagerProtocol {
             photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoPreviewType]
             backCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
             frontCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
-            
-            // TODO: Put this in a better place.
-            let hapticFeedback = UIImpactFeedbackGenerator(style: .medium)
-            hapticFeedback.impactOccurred()
         }
     }
     

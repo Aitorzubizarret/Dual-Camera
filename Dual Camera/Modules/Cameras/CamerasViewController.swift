@@ -16,14 +16,14 @@ final class CamerasViewController: UIViewController {
     
     @IBOutlet weak var changeCamerasButton: UIButton!
     @IBAction func changeCamerasButtonTapped(_ sender: Any) {
-        presenter?.changeCameras()
+        changeCamerasAction()
     }
     
     @IBOutlet weak var actionButtonsView: UIView!
     @IBOutlet weak var galleryPreviewImageView: UIImageView!
     @IBOutlet weak var takePhotoButton: UIButton!
     @IBAction func takePhotoButtonTapped(_ sender: Any) {
-        presenter?.takePhoto()
+        takePhotoAction()
     }
     
     // MARK: - Properties (from )
@@ -130,6 +130,18 @@ final class CamerasViewController: UIViewController {
         photoPickerVC.delegate = self
         
         self.present(photoPickerVC, animated: true, completion: nil)
+    }
+    
+    private func changeCamerasAction() {
+        presenter?.changeCameras()
+    }
+    
+    private func takePhotoAction() {
+        // Haptic Feedback.
+        let hapticFeedback = UIImpactFeedbackGenerator(style: .medium)
+        hapticFeedback.impactOccurred()
+        
+        presenter?.takePhoto()
     }
     
 }
