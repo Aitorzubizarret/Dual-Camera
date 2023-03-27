@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - View
+
 protocol CamerasViewProtocol: AnyObject {
     
     var presenter: CamerasPresenterProtocol? { get set }
@@ -15,7 +17,11 @@ protocol CamerasViewProtocol: AnyObject {
     func onCameraPermissionGranted()
     func onMultiCamNotSupported()
     func onMultiCamSupported()
+    
+    func onTakePhotoSuccess(finalImageData: Data)
 }
+
+// MARK: - Presenter
 
 protocol CamerasPresenterProtocol: AnyObject {
     
@@ -33,5 +39,19 @@ protocol CamerasPresenterProtocol: AnyObject {
     
     func changeCameras()
     func takePhoto()
+}
+
+protocol CamerasPresenterToCameraManagerProtocol: AnyObject {
+    
+    func takePhotoSuccess(finalImageData: Data)
+    func takePhotoFailure(error: String)
+    
+}
+
+// MARK: - CameraManager
+
+protocol CameraManagerToPresenterProtocol: AnyObject {
+    
+    var presenter: CamerasPresenterToCameraManagerProtocol? { get set }
     
 }

@@ -12,7 +12,7 @@ import CoreImage
 
 final class CameraManager: NSObject {
     
-    // MARK: - Properties
+    // MARK: - Properties (from CameraManagerProtocol)
     
     var session: AVCaptureMultiCamSession? // AVCaptureSession?
     
@@ -28,6 +28,12 @@ final class CameraManager: NSObject {
     
     var backCameraOutput: AVCapturePhotoOutput?
     var frontCameraOutput: AVCapturePhotoOutput?
+    
+    // MARK: - Properties (from CameraManagerToPresenterProtocol)
+    
+    var presenter: CamerasPresenterToCameraManagerProtocol?
+    
+    // MARK: - Properties
     
     private var isBackCameraMain: Bool = true
     
@@ -78,15 +84,18 @@ final class CameraManager: NSObject {
         // CIImage -> CGImage.
         guard let cgiImageFinal = context.createCGImage(image, from: image.extent) else { return }
         
+        guard let imageData: Data = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right).jpegData(compressionQuality: 1.0) else { return }
+        
         let library = PHPhotoLibrary.shared()
         library.performChanges ({
-            guard let imageData: Data = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right).jpegData(compressionQuality: 1.0) else { return }
-            
             let request = PHAssetCreationRequest.forAsset()
             request.addResource(with: .photo, data: imageData, options: nil)
         }, completionHandler: { success, error in
             if success {
                 print("✅ Success saving the photo in Photo Gallery.")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presenter?.takePhotoSuccess(finalImageData: imageData)
+                }
             } else if let error = error {
                 print("❌ Error saving the photo in Photo Gallery. (didFinishProcessingPhoto) Error:  \(error)")
                 // TODO: Alert the user.
@@ -98,6 +107,8 @@ final class CameraManager: NSObject {
     }
     
 }
+
+// MARK: - CameraManagerProtocol
 
 extension CameraManager: CameraManagerProtocol {
     
@@ -288,6 +299,8 @@ extension CameraManager: CameraManagerProtocol {
             photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoPreviewType]
             backCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
             frontCameraOutput?.capturePhoto(with: photoSettings, delegate: self)
+        } else {
+            presenter?.takePhotoFailure(error: "Error AVCapturePhotoSettings")
         }
     }
     
@@ -299,10 +312,15 @@ extension CameraManager: CameraManagerProtocol {
     
 }
 
+// MARK: - AVCapturePhotoCapture Delegate
+
 extension CameraManager: AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard let imageData = photo.fileDataRepresentation() else { return }
+        guard let imageData = photo.fileDataRepresentation() else {
+            presenter?.takePhotoFailure(error: "")
+            return
+        }
         
         // Checks if the output came from the back camera or the front camera.
         if isBackCameraMain {
@@ -320,7 +338,10 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         }
         
         guard let mainPhoto = mainPhotoData,
-              let secondaryPhot = secondaryPhotoData else { return }
+              let secondaryPhot = secondaryPhotoData else {
+            presenter?.takePhotoFailure(error: "")
+            return
+        }
         
         createFinalPhoto(mainPhoto: mainPhoto, secondaryPhoto: secondaryPhot)
         
@@ -329,3 +350,7 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
     }
     
 }
+
+// MARK: - CameraManagerToPresenterProtocol
+
+extension CameraManager: CameraManagerToPresenterProtocol {}

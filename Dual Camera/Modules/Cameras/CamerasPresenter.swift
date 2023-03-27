@@ -75,3 +75,15 @@ extension CamerasPresenter: CamerasPresenterProtocol {
     }
     
 }
+
+extension CamerasPresenter: CamerasPresenterToCameraManagerProtocol {
+    
+    func takePhotoSuccess(finalImageData: Data) {
+        view?.onTakePhotoSuccess(finalImageData: finalImageData)
+    }
+    
+    func takePhotoFailure(error: String) {
+        print("\(error)")
+    }
+    
+}

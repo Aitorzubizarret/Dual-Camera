@@ -174,4 +174,8 @@ extension CamerasViewController: CamerasViewProtocol {
         presenter?.setup(dualCameraView: dualCameraView)
     }
     
+    func onTakePhotoSuccess(finalImageData: Data) {
+        galleryPreviewImageView.image = UIImage(data: finalImageData)
+    }
+    
 }

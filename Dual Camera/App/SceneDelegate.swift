@@ -19,15 +19,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         // Camera Manager.
-        let cameraManager: CameraManagerProtocol = CameraManager()
+        let cameraManager: CameraManagerProtocol & CameraManagerToPresenterProtocol = CameraManager()
         
         // Camera Presenter.
-        let presenter: CamerasPresenterProtocol = CamerasPresenter(cameraManager: cameraManager)
+        let presenter: CamerasPresenterProtocol & CamerasPresenterToCameraManagerProtocol = CamerasPresenter(cameraManager: cameraManager)
         
         // View Controller
         let camerasVC = CamerasViewController(presenter: presenter)
         
         presenter.view = camerasVC
+        cameraManager.presenter = presenter
         
         let newWindow = UIWindow(windowScene: windowScene)
         newWindow.rootViewController = camerasVC
