@@ -14,6 +14,8 @@ final class CamerasPresenter {
     weak var view: CamerasViewProtocol?
     var cameraManager: CameraManagerProtocol
     
+    // MARK: - Methods
+    
     init(cameraManager: CameraManagerProtocol) {
         self.cameraManager = cameraManager
     }
