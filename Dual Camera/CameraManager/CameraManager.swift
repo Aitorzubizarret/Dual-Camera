@@ -86,11 +86,13 @@ final class CameraManager: NSObject {
             request.addResource(with: .photo, data: imageData, options: nil)
         }, completionHandler: { success, error in
             if success {
-                print("Success saving photo to gallery (didFinishProcessingPhoto)")
+                print("✅ Success saving the photo in Photo Gallery.")
             } else if let error = error {
-                print("Error didFinishProcessingPhoto saving photo to gallery :  \(error)")
+                print("❌ Error saving the photo in Photo Gallery. (didFinishProcessingPhoto) Error:  \(error)")
+                // TODO: Alert the user.
             } else {
-                // Save photo failed with no error
+                print("❌ Error saving the photo in Photo Gallery. (didFinishProcessingPhoto)")
+                // TODO: Alert the user.
             }
         })
     }
@@ -104,10 +106,10 @@ extension CameraManager: CameraManagerProtocol {
         
         switch status {
         case .authorized:
-            print("Camera auth permission : authorized")
+            print("✅ Camera Auth permission : Authorized")
             completion(true)
         case .notDetermined:
-            print("Camera auth permission : notDetermined")
+            print("❓ Camera Auth permission : NotDetermined")
             AVCaptureDevice.requestAccess(for: .video) { (granted) in
                 if granted {
                     completion(true)
@@ -116,13 +118,13 @@ extension CameraManager: CameraManagerProtocol {
                 }
             }
         case .denied:
-            print("Camera auth permission : denied")
+            print("❌ Camera Auth permission : Denied")
             completion(false)
         case .restricted:
-            print("Camera auth permission : restricted")
+            print("❌ Camera Auth permission : Restricted")
             completion(false)
         default: // For future status types.
-            print("Camera auth permission : default")
+            print("❓ Camera Auth permission : Default")
             completion(false)
         }
     }
@@ -209,7 +211,7 @@ extension CameraManager: CameraManagerProtocol {
         let frontDevices = frontDiscoverySession.devices
         
         if frontDevices.isEmpty {
-            print("NO Front Capture Device ready.")
+            print("❌ Front Capture Device NOT ready.")
         } else {
             self.frontCaptureDevice = frontDevices.first
             

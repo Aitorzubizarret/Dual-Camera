@@ -33,10 +33,10 @@ extension CamerasPresenter: CamerasPresenterProtocol {
     func checkCameraPermission() {
         cameraManager.hasCameraPermission { [weak self] granted in
             if granted {
-                debugPrint("✅ Camera access GRANTED")
+                print("✅ Camera access : Granted")
                 self?.view?.onCameraPermissionGranted()
             } else {
-                debugPrint("❌ Camera access NOT GRANTED")
+                print("❌ Camera access : Not Granted")
                 self?.view?.onCameraPermissionNotGranted()
             }
         }
@@ -44,10 +44,10 @@ extension CamerasPresenter: CamerasPresenterProtocol {
     
     func checkMultiCamSupport() {
         if cameraManager.isMultiCamSupported() {
-            debugPrint("✅ MultiCam SUPPORTED")
+            print("✅ MultiCam : Supported")
             view?.onMultiCamSupported()
         } else {
-            debugPrint("❌ MultiCam NOT SUPPORTED")
+            print("❌ MultiCam : Not Supported")
             view?.onMultiCamNotSupported()
         }
     }
