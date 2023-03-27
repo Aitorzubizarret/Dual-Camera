@@ -18,6 +18,7 @@ protocol CameraManagerProtocol {
     
     var frontCaptureDevice: AVCaptureDevice? { get set }
     var frontCaptureDeviceInput: AVCaptureDeviceInput? { get set }
+    var frontCaptureDevicePreviewLayer: AVCaptureVideoPreviewLayer { get set }
     
     var backCaptureDevice: AVCaptureDevice? { get set }
     var backCaptureDeviceInput: AVCaptureDeviceInput? { get set }
@@ -25,7 +26,6 @@ protocol CameraManagerProtocol {
     
     var backCameraOutput: AVCapturePhotoOutput? { get set }
     var frontCameraOutput: AVCapturePhotoOutput? { get set }
-    var frontCaptureDevicePreviewLayer: AVCaptureVideoPreviewLayer { get set }
     
     // MARK: - Methods
     
