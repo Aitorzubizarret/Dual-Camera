@@ -16,24 +16,24 @@ final class CamerasViewController: UIViewController {
     
     @IBOutlet weak var changeCamerasButton: UIButton!
     @IBAction func changeCamerasButtonTapped(_ sender: Any) {
-        cameraManager.changeCameras()
+        presenter?.changeCameras()
     }
     
     @IBOutlet weak var actionButtonsView: UIView!
     @IBOutlet weak var galleryPreviewImageView: UIImageView!
     @IBOutlet weak var takePhotoButton: UIButton!
     @IBAction func takePhotoButtonTapped(_ sender: Any) {
-        cameraManager.takeFrontAndBackPhoto()
+        presenter?.takePhoto()
     }
     
-    // MARK: - Properties
+    // MARK: - Properties (from )
     
-    var cameraManager: CameraManagerProtocol
+    var presenter: CamerasPresenterProtocol?
     
     // MARK: - Methods
     
-    init(cameraManager: CameraManagerProtocol) {
-        self.cameraManager = cameraManager
+    init(presenter: CamerasPresenterProtocol) {
+        self.presenter = presenter
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -49,15 +49,20 @@ final class CamerasViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        cameraManager.stopSession()
+        super.viewWillDisappear(animated)
+        
+        print("View viewWillDisappear")
+        presenter?.viewWillDisappear()
+        
+//        cameraManager.stopSession()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        dualCameraView.setupViewSize(maxWidth: dualCameraView.frame.width, maxHeight: dualCameraView.frame.height)
+        presenter?.checkCameraPermission()
         
-        checkCameraPermission()
+        dualCameraView.setupViewSize(maxWidth: dualCameraView.frame.width, maxHeight: dualCameraView.frame.height)
     }
     
     private func setupView() {
@@ -80,33 +85,7 @@ final class CamerasViewController: UIViewController {
         changeCamerasButton.layer.borderColor = UIColor.white.withAlphaComponent(0.6).cgColor
     }
     
-    private func checkCameraPermission() {
-        cameraManager.hasCameraPermission { [weak self] granted in
-            if granted {
-                print("Camera access granted")
-                self?.checkMultiCamSupport()
-            } else {
-                self?.displayCameraPermissionNotGrantedAlertView()
-                print("Camera access NOT granted")
-            }
-        }
-    }
-    
-    private func checkMultiCamSupport() {
-        if cameraManager.isMultiCamSupported() {
-            print("Multicam supported")
-            
-            cameraManager.setup(dualCameraView: dualCameraView)
-            
-            cameraManager.startSession()
-        } else {
-            displayMultiCamNotSupportedAlertView()
-        }
-    }
-    
-    ///
     /// Displays an alert view to inform the user that the app has no camera permission.
-    ///
     private func displayCameraPermissionNotGrantedAlertView() {
         DispatchQueue.main.async { [weak self] in
             let alertTitle = "Permission not granted"
@@ -124,9 +103,7 @@ final class CamerasViewController: UIViewController {
         }
     }
     
-    ///
     /// Displays an alert view to inform the user that the device does NOT support multi camera function.
-    ///
     private func displayMultiCamNotSupportedAlertView() {
         DispatchQueue.main.async { [weak self] in
             let alertTitle = "Not supported"
@@ -161,6 +138,28 @@ extension CamerasViewController: PHPickerViewControllerDelegate {
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true)
+    }
+    
+}
+
+// MARK: - CamearasViewProtocol
+
+extension CamerasViewController: CamerasViewProtocol {
+    
+    func onCameraPermissionNotGranted() {
+        displayCameraPermissionNotGrantedAlertView()
+    }
+    
+    func onCameraPermissionGranted() {
+        presenter?.checkMultiCamSupport()
+    }
+    
+    func onMultiCamNotSupported() {
+        displayMultiCamNotSupportedAlertView()
+    }
+    
+    func onMultiCamSupported() {
+        presenter?.setup(dualCameraView: dualCameraView)
     }
     
 }

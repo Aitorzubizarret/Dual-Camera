@@ -138,10 +138,14 @@ extension CameraManager: CameraManagerProtocol {
         createMulticamSession()
         
         configureBackCamera()
-        displayBackCamera()
-        
         configureFrontCamera()
-        displayFrontCamera()
+        
+        startSession()
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.displayBackCamera()
+            self?.displayFrontCamera()
+        }
     }
     
     func configureBackCamera() {
@@ -156,7 +160,6 @@ extension CameraManager: CameraManagerProtocol {
             print("No Back Capture Device (Camera) ready")
         } else {
             backCaptureDevice = backCaptureDevices.first
-            
             guard let backCaptureDevice = self.backCaptureDevice,
                   let backCaptureDeviceInput = try? AVCaptureDeviceInput(device: backCaptureDevice),
                   let session = self.session,

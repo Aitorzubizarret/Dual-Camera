@@ -18,11 +18,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let newWindow = UIWindow(windowScene: windowScene)
-        
+        // Camera Manager.
         let cameraManager: CameraManagerProtocol = CameraManager()
-        let camerasVC = CamerasViewController(cameraManager: cameraManager)
         
+        // Camera Presenter.
+        let presenter: CamerasPresenterProtocol = CamerasPresenter(cameraManager: cameraManager)
+        
+        // View Controller
+        let camerasVC = CamerasViewController(presenter: presenter)
+        
+        presenter.view = camerasVC
+        
+        let newWindow = UIWindow(windowScene: windowScene)
         newWindow.rootViewController = camerasVC
         
         self.window = newWindow

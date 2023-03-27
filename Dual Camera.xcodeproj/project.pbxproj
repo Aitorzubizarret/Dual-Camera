@@ -20,6 +20,8 @@
 		1A884542290ED8E500FC5675 /* Dual_CameraUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A884541290ED8E500FC5675 /* Dual_CameraUITestsLaunchTests.swift */; };
 		1A884552290EDAC000FC5675 /* CamerasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A884550290EDAC000FC5675 /* CamerasViewController.swift */; };
 		1A884553290EDAC000FC5675 /* CamerasViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A884551290EDAC000FC5675 /* CamerasViewController.xib */; };
+		1AC2E7AA29D1950A00F7ACD5 /* CamerasProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2E7A929D1950A00F7ACD5 /* CamerasProtocols.swift */; };
+		1AC2E7AC29D1955400F7ACD5 /* CamerasPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2E7AB29D1955400F7ACD5 /* CamerasPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		1A884541290ED8E500FC5675 /* Dual_CameraUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dual_CameraUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		1A884550290EDAC000FC5675 /* CamerasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamerasViewController.swift; sourceTree = "<group>"; };
 		1A884551290EDAC000FC5675 /* CamerasViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CamerasViewController.xib; sourceTree = "<group>"; };
+		1AC2E7A929D1950A00F7ACD5 /* CamerasProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamerasProtocols.swift; sourceTree = "<group>"; };
+		1AC2E7AB29D1955400F7ACD5 /* CamerasPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamerasPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +133,7 @@
 				1AC2E79729D0CCA500F7ACD5 /* Resources */,
 				1AC2E79829D0CCB600F7ACD5 /* Supporting files */,
 				1A0CE28429108AE70094597D /* CameraManager */,
+				1AC2E7A729D194B500F7ACD5 /* Modules */,
 				1A88454E290EDA7E00FC5675 /* Views */,
 			);
 			path = "Dual Camera";
@@ -154,19 +159,9 @@
 		1A88454E290EDA7E00FC5675 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				1A88454F290EDA9A00FC5675 /* CamerasViewController */,
 				1A308B3D29257E3E00E226B8 /* DualCameraView */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		1A88454F290EDA9A00FC5675 /* CamerasViewController */ = {
-			isa = PBXGroup;
-			children = (
-				1A884550290EDAC000FC5675 /* CamerasViewController.swift */,
-				1A884551290EDAC000FC5675 /* CamerasViewController.xib */,
-			);
-			path = CamerasViewController;
 			sourceTree = "<group>";
 		};
 		1AC2E79629D0CC8E00F7ACD5 /* App */ = {
@@ -193,6 +188,25 @@
 				1A88452C290ED8E500FC5675 /* Info.plist */,
 			);
 			path = "Supporting files";
+			sourceTree = "<group>";
+		};
+		1AC2E7A729D194B500F7ACD5 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				1AC2E7A829D194BF00F7ACD5 /* Cameras */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		1AC2E7A829D194BF00F7ACD5 /* Cameras */ = {
+			isa = PBXGroup;
+			children = (
+				1AC2E7A929D1950A00F7ACD5 /* CamerasProtocols.swift */,
+				1A884550290EDAC000FC5675 /* CamerasViewController.swift */,
+				1A884551290EDAC000FC5675 /* CamerasViewController.xib */,
+				1AC2E7AB29D1955400F7ACD5 /* CamerasPresenter.swift */,
+			);
+			path = Cameras;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -332,6 +346,8 @@
 				1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */,
 				1A0CE2882910911E0094597D /* CameraManagerProtocol.swift in Sources */,
 				1A0CE28629108AFE0094597D /* CameraManager.swift in Sources */,
+				1AC2E7AC29D1955400F7ACD5 /* CamerasPresenter.swift in Sources */,
+				1AC2E7AA29D1950A00F7ACD5 /* CamerasProtocols.swift in Sources */,
 				1A884552290EDAC000FC5675 /* CamerasViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
