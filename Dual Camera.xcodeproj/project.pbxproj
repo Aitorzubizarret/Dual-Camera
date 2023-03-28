@@ -12,6 +12,8 @@
 		1A308B3F29257E6200E226B8 /* DualCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A308B3E29257E6200E226B8 /* DualCameraView.swift */; };
 		1A308B4129257E7700E226B8 /* DualCameraView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A308B4029257E7700E226B8 /* DualCameraView.xib */; };
 		1A766DA429D24B8D00BD2953 /* CamerasRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A766DA329D24B8D00BD2953 /* CamerasRouter.swift */; };
+		1A766DA729D250E300BD2953 /* FinalPhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A766DA629D250E300BD2953 /* FinalPhotoManager.swift */; };
+		1A766DA929D250F100BD2953 /* FinalPhotoManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A766DA829D250F100BD2953 /* FinalPhotoManagerProtocol.swift */; };
 		1A88451F290ED8E400FC5675 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A88451E290ED8E400FC5675 /* AppDelegate.swift */; };
 		1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A884520290ED8E400FC5675 /* SceneDelegate.swift */; };
 		1A884528290ED8E500FC5675 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A884527290ED8E500FC5675 /* Assets.xcassets */; };
@@ -48,6 +50,8 @@
 		1A308B3E29257E6200E226B8 /* DualCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraView.swift; sourceTree = "<group>"; };
 		1A308B4029257E7700E226B8 /* DualCameraView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DualCameraView.xib; sourceTree = "<group>"; };
 		1A766DA329D24B8D00BD2953 /* CamerasRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamerasRouter.swift; sourceTree = "<group>"; };
+		1A766DA629D250E300BD2953 /* FinalPhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalPhotoManager.swift; sourceTree = "<group>"; };
+		1A766DA829D250F100BD2953 /* FinalPhotoManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalPhotoManagerProtocol.swift; sourceTree = "<group>"; };
 		1A88451B290ED8E400FC5675 /* Dual Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dual Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A88451E290ED8E400FC5675 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A884520290ED8E400FC5675 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -108,6 +112,15 @@
 			path = DualCameraView;
 			sourceTree = "<group>";
 		};
+		1A766DA529D2509D00BD2953 /* FinalPhotoManager */ = {
+			isa = PBXGroup;
+			children = (
+				1A766DA829D250F100BD2953 /* FinalPhotoManagerProtocol.swift */,
+				1A766DA629D250E300BD2953 /* FinalPhotoManager.swift */,
+			);
+			path = FinalPhotoManager;
+			sourceTree = "<group>";
+		};
 		1A884512290ED8E400FC5675 = {
 			isa = PBXGroup;
 			children = (
@@ -135,6 +148,7 @@
 				1AC2E79729D0CCA500F7ACD5 /* Resources */,
 				1AC2E79829D0CCB600F7ACD5 /* Supporting files */,
 				1A0CE28429108AE70094597D /* CameraManager */,
+				1A766DA529D2509D00BD2953 /* FinalPhotoManager */,
 				1AC2E7A729D194B500F7ACD5 /* Modules */,
 				1A88454E290EDA7E00FC5675 /* Views */,
 			);
@@ -347,7 +361,9 @@
 				1A308B3F29257E6200E226B8 /* DualCameraView.swift in Sources */,
 				1A88451F290ED8E400FC5675 /* AppDelegate.swift in Sources */,
 				1A884521290ED8E400FC5675 /* SceneDelegate.swift in Sources */,
+				1A766DA729D250E300BD2953 /* FinalPhotoManager.swift in Sources */,
 				1A0CE2882910911E0094597D /* CameraManagerProtocol.swift in Sources */,
+				1A766DA929D250F100BD2953 /* FinalPhotoManagerProtocol.swift in Sources */,
 				1A0CE28629108AFE0094597D /* CameraManager.swift in Sources */,
 				1A766DA429D24B8D00BD2953 /* CamerasRouter.swift in Sources */,
 				1AC2E7AC29D1955400F7ACD5 /* CamerasPresenter.swift in Sources */,

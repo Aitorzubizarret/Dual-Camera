@@ -16,8 +16,11 @@ extension CamerasRouter: CamerasRouterProtocol {
         // Camera Manager.
         let cameraManager: CameraManagerProtocol & CameraManagerToPresenterProtocol = CameraManager()
         
+        // let FinalPhoto Manager.
+        let finalPhotoManager: FinalPhotoManagerProtocol & FinalPhotoManagerToPresenterProtocol = FinalPhotoManager()
+        
         // Camera Presenter.
-        let presenter: CamerasPresenterProtocol & CamerasPresenterToCameraManagerProtocol = CamerasPresenter(cameraManager: cameraManager)
+        let presenter: CamerasPresenterProtocol & CamerasPresenterToCameraManagerProtocol & CamerasPresenterToFinalPhotoManagerProtocol = CamerasPresenter(cameraManager: cameraManager, finalPhotoManager: finalPhotoManager)
         
         // Camera Router.
         let router: CamerasRouterProtocol = CamerasRouter()
@@ -29,6 +32,7 @@ extension CamerasRouter: CamerasRouterProtocol {
         presenter.view = camerasVC
         presenter.router = router
         cameraManager.presenter = presenter
+        finalPhotoManager.presenter = presenter
         
         return camerasVC
     }

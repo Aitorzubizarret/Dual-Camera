@@ -7,8 +7,6 @@
 
 import UIKit
 import AVFoundation
-import Photos
-import CoreImage
 
 final class CameraManager: NSObject {
     
@@ -39,72 +37,6 @@ final class CameraManager: NSObject {
     
     private var mainPhotoData: Data?
     private var secondaryPhotoData: Data?
-    
-    // MARK: - Methods
-    
-    private func createFinalPhoto(mainPhoto: Data, secondaryPhoto: Data) {
-        
-        // TODO: Check image size
-        
-        // Create two CIImages from received Data.
-        guard let ciImageMainPhoto = CIImage(data: mainPhoto),
-              let ciImageSecondaryPhoto = CIImage(data: secondaryPhoto) else { return }
-        
-        // Get size of main photo.
-        let backgroundWidth = ciImageMainPhoto.extent.width
-        let backgroundHeight = ciImageMainPhoto.extent.height
-        
-        // Scale secondary photo.
-        let scaleTransform: CGAffineTransform = CGAffineTransform(scaleX: 0.3, y: 0.3)
-        let ciImageSecondaryPhotoScaled: CIImage = ciImageSecondaryPhoto.transformed(by: scaleTransform)
-        
-        // Calculate coordinates for the secondary photo.
-        let x = backgroundWidth - (((backgroundWidth * 30) / 100) + 50)
-        let y = backgroundHeight - (((backgroundHeight * 30) / 100) + 50)
-        
-        // Position secondary photo.
-        let translateTransform: CGAffineTransform = CGAffineTransform(translationX: x, y: y)
-        let ciImageSecondaryPhotoScaledTranslated: CIImage = ciImageSecondaryPhotoScaled.transformed(by: translateTransform)
-        
-        // Create blend filter.
-        let blendFilter = CIFilter(name: "CISourceOverCompositing")
-        blendFilter?.setValue(ciImageMainPhoto, forKey: kCIInputBackgroundImageKey)
-        blendFilter?.setValue(ciImageSecondaryPhotoScaledTranslated, forKey: kCIInputImageKey)
-        
-        // Apply blend filter to create the ouput CIImage.
-        guard let ciImageFinal = blendFilter?.outputImage else { return }
-        
-        saveImageInLibrary(image: ciImageFinal)
-    }
-    
-    private func saveImageInLibrary(image: CIImage) {
-        // Create CoreImage context.
-        let context = CIContext(options: nil)
-        
-        // CIImage -> CGImage.
-        guard let cgiImageFinal = context.createCGImage(image, from: image.extent) else { return }
-        
-        guard let imageData: Data = UIImage(cgImage: cgiImageFinal, scale: 1.0, orientation: .right).jpegData(compressionQuality: 1.0) else { return }
-        
-        let library = PHPhotoLibrary.shared()
-        library.performChanges ({
-            let request = PHAssetCreationRequest.forAsset()
-            request.addResource(with: .photo, data: imageData, options: nil)
-        }, completionHandler: { success, error in
-            if success {
-                print("✅ Success saving the photo in Photo Gallery.")
-                DispatchQueue.main.async { [weak self] in
-                    self?.presenter?.takePhotoSuccess(finalImageData: imageData)
-                }
-            } else if let error = error {
-                print("❌ Error saving the photo in Photo Gallery. (didFinishProcessingPhoto) Error:  \(error)")
-                // TODO: Alert the user.
-            } else {
-                print("❌ Error saving the photo in Photo Gallery. (didFinishProcessingPhoto)")
-                // TODO: Alert the user.
-            }
-        })
-    }
     
 }
 
@@ -338,12 +270,12 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         }
         
         guard let mainPhoto = mainPhotoData,
-              let secondaryPhot = secondaryPhotoData else {
+              let secondaryPhoto = secondaryPhotoData else {
             presenter?.takePhotoFailure(error: "")
             return
         }
         
-        createFinalPhoto(mainPhoto: mainPhoto, secondaryPhoto: secondaryPhot)
+        presenter?.takePhotoSuccess(mainPhoto: mainPhoto, secondaryPhoto: secondaryPhoto)
         
         mainPhotoData = nil
         secondaryPhotoData = nil

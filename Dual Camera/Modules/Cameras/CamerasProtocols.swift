@@ -28,6 +28,7 @@ protocol CamerasPresenterProtocol: AnyObject {
     
     var view: CamerasViewProtocol? { get set }
     var cameraManager: CameraManagerProtocol { get set }
+    var finalPhotoManager: FinalPhotoManagerProtocol { get set }
     var router: CamerasRouterProtocol? { get set }
     
     func viewWillDisappear()
@@ -45,8 +46,17 @@ protocol CamerasPresenterProtocol: AnyObject {
 
 protocol CamerasPresenterToCameraManagerProtocol: AnyObject {
     
-    func takePhotoSuccess(finalImageData: Data)
+    func takePhotoSuccess(mainPhoto: Data, secondaryPhoto: Data)
     func takePhotoFailure(error: String)
+    
+}
+
+protocol CamerasPresenterToFinalPhotoManagerProtocol: AnyObject {
+    
+    func createFinalPhotoSuccess()
+    func createFinalPhotoFailure(errorDescription: String)
+    func saveFinalPhotoSuccess(finalImageData: Data)
+    func saveFinalPhotoFailure(errorDescription: String)
     
 }
 
@@ -63,5 +73,13 @@ protocol CamerasRouterProtocol: AnyObject {
 protocol CameraManagerToPresenterProtocol: AnyObject {
     
     var presenter: CamerasPresenterToCameraManagerProtocol? { get set }
+    
+}
+
+// MARK: - FinalPhotoManager
+
+protocol FinalPhotoManagerToPresenterProtocol: AnyObject {
+    
+    var presenter: CamerasPresenterToFinalPhotoManagerProtocol? { get set }
     
 }

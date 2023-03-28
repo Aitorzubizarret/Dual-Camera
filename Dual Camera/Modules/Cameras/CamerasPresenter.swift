@@ -13,12 +13,14 @@ final class CamerasPresenter {
     
     weak var view: CamerasViewProtocol?
     var cameraManager: CameraManagerProtocol
+    var finalPhotoManager: FinalPhotoManagerProtocol
     var router: CamerasRouterProtocol?
     
     // MARK: - Methods
     
-    init(cameraManager: CameraManagerProtocol) {
+    init(cameraManager: CameraManagerProtocol, finalPhotoManager: FinalPhotoManagerProtocol) {
         self.cameraManager = cameraManager
+        self.finalPhotoManager = finalPhotoManager
     }
     
 }
@@ -77,14 +79,39 @@ extension CamerasPresenter: CamerasPresenterProtocol {
     
 }
 
+// MARK: - CamerasPresenterToCameraManagerProtocol
+
 extension CamerasPresenter: CamerasPresenterToCameraManagerProtocol {
     
-    func takePhotoSuccess(finalImageData: Data) {
-        view?.onTakePhotoSuccess(finalImageData: finalImageData)
+    func takePhotoSuccess(mainPhoto: Data, secondaryPhoto: Data) {
+        finalPhotoManager.createFinalPhoto(mainPhotoData: mainPhoto, secondaryPhotoData: secondaryPhoto)
     }
     
     func takePhotoFailure(error: String) {
         print("\(error)")
+    }
+    
+}
+
+// MARK: - CamerasPresenterToFinalPhotoManagerProtocol
+
+extension CamerasPresenter: CamerasPresenterToFinalPhotoManagerProtocol {
+    
+    func createFinalPhotoSuccess() {
+        print("Presenter createFinalPhotoSuccess")
+    }
+    
+    func createFinalPhotoFailure(errorDescription: String) {
+        print("Presenter createFinalPhotoFailure. \(errorDescription)")
+    }
+    
+    func saveFinalPhotoSuccess(finalImageData: Data) {
+        print("Presenter saveFinalPhotoSuccess")
+        view?.onTakePhotoSuccess(finalImageData: finalImageData)
+    }
+    
+    func saveFinalPhotoFailure(errorDescription: String) {
+        print("Presenter saveFinalPhotoFailure. \(errorDescription)")
     }
     
 }
