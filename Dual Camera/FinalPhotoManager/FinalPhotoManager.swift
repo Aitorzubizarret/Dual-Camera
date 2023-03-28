@@ -16,6 +16,25 @@ final class FinalPhotoManager {
     
     var presenter: CamerasPresenterToFinalPhotoManagerProtocol?
     
+    // MARK: - Methods
+    
+    private func roundCorners(of image: CIImage, withRadius radius: CGFloat) -> CIImage? {
+        // Create a round rectangle filter.
+        let roundRectangleFilter = CIFilter(name: "CIRoundedRectangleGenerator")
+        roundRectangleFilter?.setValue(CIVector(cgRect: image.extent), forKey: kCIInputExtentKey)
+        roundRectangleFilter?.setValue(radius, forKey: kCIInputRadiusKey)
+        
+        guard let roundRectangleImage = roundRectangleFilter?.outputImage else { return nil }
+        
+        // Blend the created round rectangle with the image received.
+        // The output image will be as the rounded rectangle.
+        let blendFilter = CIFilter(name: "CISourceAtopCompositing")
+        blendFilter?.setValue(roundRectangleImage, forKey: kCIInputBackgroundImageKey)
+        blendFilter?.setValue(image, forKey: kCIInputImageKey)
+        
+        return blendFilter?.outputImage
+    }
+    
 }
 
 // MARK: - FinalPhotoManagerProtocol
@@ -27,7 +46,7 @@ extension FinalPhotoManager: FinalPhotoManagerProtocol {
         
         // Create two CIImages from received Data.
         guard let ciImageMainPhoto = CIImage(data: mainPhotoData),
-              let ciImageSecondaryPhoto = CIImage(data: secondaryPhotoData) else { return }
+              var ciImageSecondaryPhoto = CIImage(data: secondaryPhotoData) else { return }
         
         // Get size of main photo.
         let backgroundWidth = ciImageMainPhoto.extent.width
@@ -35,7 +54,12 @@ extension FinalPhotoManager: FinalPhotoManagerProtocol {
         
         // Scale secondary photo.
         let scaleTransform: CGAffineTransform = CGAffineTransform(scaleX: 0.3, y: 0.3)
-        let ciImageSecondaryPhotoScaled: CIImage = ciImageSecondaryPhoto.transformed(by: scaleTransform)
+        ciImageSecondaryPhoto = ciImageSecondaryPhoto.transformed(by: scaleTransform)
+        
+        // Round the corners of the secondary photo.
+        if let ciImageSecondaryPhotoRounded = roundCorners(of: ciImageSecondaryPhoto, withRadius: 20) {
+            ciImageSecondaryPhoto = ciImageSecondaryPhotoRounded
+        }
         
         // Calculate coordinates for the secondary photo.
         let x = backgroundWidth - (((backgroundWidth * 30) / 100) + 50)
@@ -43,12 +67,12 @@ extension FinalPhotoManager: FinalPhotoManagerProtocol {
         
         // Position secondary photo.
         let translateTransform: CGAffineTransform = CGAffineTransform(translationX: x, y: y)
-        let ciImageSecondaryPhotoScaledTranslated: CIImage = ciImageSecondaryPhotoScaled.transformed(by: translateTransform)
+        ciImageSecondaryPhoto = ciImageSecondaryPhoto.transformed(by: translateTransform)
         
         // Create blend filter.
         let blendFilter = CIFilter(name: "CISourceOverCompositing")
         blendFilter?.setValue(ciImageMainPhoto, forKey: kCIInputBackgroundImageKey)
-        blendFilter?.setValue(ciImageSecondaryPhotoScaledTranslated, forKey: kCIInputImageKey)
+        blendFilter?.setValue(ciImageSecondaryPhoto, forKey: kCIInputImageKey)
         
         // Apply blend filter to create the ouput CIImage.
         guard let ciImageFinal = blendFilter?.outputImage else { return }
