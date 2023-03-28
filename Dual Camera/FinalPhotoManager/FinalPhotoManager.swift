@@ -18,6 +18,11 @@ final class FinalPhotoManager {
     
     // MARK: - Methods
     
+    private func scale(image: CIImage, byPercentage percentage: CGFloat) -> CIImage {
+        let scaleTransform: CGAffineTransform = CGAffineTransform(scaleX: percentage, y: percentage)
+        return image.transformed(by: scaleTransform)
+    }
+    
     private func roundCorners(of image: CIImage, withRadius radius: CGFloat) -> CIImage? {
         // Create a round rectangle filter.
         let roundRectangleFilter = CIFilter(name: "CIRoundedRectangleGenerator")
@@ -53,8 +58,7 @@ extension FinalPhotoManager: FinalPhotoManagerProtocol {
         let backgroundHeight = ciImageMainPhoto.extent.height
         
         // Scale secondary photo.
-        let scaleTransform: CGAffineTransform = CGAffineTransform(scaleX: 0.3, y: 0.3)
-        ciImageSecondaryPhoto = ciImageSecondaryPhoto.transformed(by: scaleTransform)
+        ciImageSecondaryPhoto = scale(image: ciImageSecondaryPhoto, byPercentage: 0.3)
         
         // Round the corners of the secondary photo.
         if let ciImageSecondaryPhotoRounded = roundCorners(of: ciImageSecondaryPhoto, withRadius: 20) {
